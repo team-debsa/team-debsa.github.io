@@ -24,7 +24,7 @@ function setup() {
     canvasHeight = windowHeight * diagramWidthRatio; // Use ratio of canvas height
 
     // Calculate offsets to center the canvas
-   canvasOffsetX = (windowWidth - 300 - canvasWidth) / 2;
+   canvasOffsetX = (windowWidth - canvasWidth) / 3;
   canvasOffsetY = (windowHeight - canvasHeight) /2;
 
   createCanvas(canvasWidth, canvasHeight);
@@ -46,7 +46,7 @@ function setup() {
 function draw() {
   background(240);
   push(); // Save current drawing settings
-   translate(canvasOffsetX, canvasOffsetY);
+   translate(canvasOffsetX/3, canvasOffsetY);
   drawSankeyDiagram();
   if (hoveredLink) {
       drawHoverInfo(hoveredLink);
@@ -291,7 +291,7 @@ function updateLinkInfo(link = null) {
 function windowResized() {
     canvasWidth = windowWidth * diagramWidthRatio - 300; // Use ratio of canvas width
     canvasHeight = windowHeight* diagramWidthRatio; // Use ratio of canvas height
-    
+
     // Calculate offsets to center the canvas
     canvasOffsetX = (windowWidth - 300 - canvasWidth) / 2;
     canvasOffsetY = (windowHeight - canvasHeight) /2;

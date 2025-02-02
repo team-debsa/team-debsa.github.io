@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Visualization</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="title">nah we dont need notes! do we?</div>
+    <div id="filter-panel">
+        <label for="age-filter">Age Group:</label>
+        <select id="age-filter">
+            <option value="all">All</option>
+            <option value="18-21">18-21</option>
+            <option value="22-25">22-25</option>
+            <option value="26+">26+</option>
+        </select>
+
+        <label for="gender-filter">Gender:</label>
+        <select id="gender-filter">
+            <option value="all">All</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+
+        <div class="slider-container">
+            <label for="scholarship-slider" class="slider-label">Scholarship %:</label>
+            <input type="range" id="scholarship-slider" min="0" max="100" value="100" class="slider-input">
+            <div class="slider-values">
+              <span id="scholarship-min-value">0%</span>
+              <span id="scholarship-max-value">100%</span>
+            </div>
+        </div>
+    
+
+        <label for="additional-work-filter">Additional Work:</label>
+        <select id="additional-work-filter">
+            <option value="all">All</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+        <label for="artistic-sports-filter">Artistic/Sports:</label>
+        <select id="artistic-sports-filter">
+            <option value="all">All</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+          <div class="slider-container">
+            <label for="study-hours-slider" class="slider-label">Weekly Study Hours:</label>
+             <input type="range" id="study-hours-slider" min="0" max="20" value="20" class="slider-input">
+            <div class="slider-values">
+              <span id="study-hours-min-value">0 hours</span>
+              <span id="study-hours-max-value">20+ hours</span>
+             </div>
+        </div>
+
+      <label for="reading-freq-non-sci-filter">Reading (Non-Sci):</label>
+        <select id="reading-freq-non-sci-filter">
+           <option value="all">All</option>
+           <option value="None">None</option>
+           <option value="Sometimes">Sometimes</option>
+           <option value="Often">Often</option>
+        </select>
+        
+        <label for="reading-freq-sci-filter">Reading (Sci):</label>
+        <select id="reading-freq-sci-filter">
+          <option value="all">All</option>
+            <option value="None">None</option>
+            <option value="Sometimes">Sometimes</option>
+            <option value="Often">Often</option>
+        </select>
+         <label for="class-attendance-filter">Class Attendance:</label>
+        <select id="class-attendance-filter">
+           <option value="all">All</option>
+           <option value="Always">Always</option>
+            <option value="Sometimes">Sometimes</option>
+            <option value="Never">Never</option>
+        </select>
+    </div>
+    
+    <div id="hover-info"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <script src="sankey.js"></script>
+</body>
+</html>

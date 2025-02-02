@@ -3,15 +3,16 @@ let nodes;
 let links;
 let canvasWidth;
 let canvasHeight;
-let nodeWidth = 30;
-let nodePadding = 10;
-let linkThickness = 10;
+let nodeWidth = 20;  // Increased node width
+let nodePadding = 50; // Increased node padding
+let linkThickness = 12; // Increased link thickness
 let hoverInfo;
 let filteredData = [];
 let hoveredLink = null;
 let selectedNode = null;
-let scholarshipSlider;
-let studyHoursSlider;
+let canvasOffsetX;
+let canvasOffsetY;
+let diagramWidthRatio = 0.8; // Ratio of canvas used by the diagram
 
 
 function preload() {
@@ -19,22 +20,37 @@ function preload() {
 }
 
 function setup() {
-    canvasWidth = windowWidth - 300;
-    canvasHeight = windowHeight;
-    createCanvas(canvasWidth, canvasHeight);
+    canvasWidth = windowWidth * diagramWidthRatio - 300; // Use ratio of canvas width
+    canvasHeight = windowHeight * diagramWidthRatio; // Use ratio of canvas height
+
+    // Calculate offsets to center the canvas
+   canvasOffsetX = (windowWidth  - 300 - canvasWidth) / 2;
+   canvasOffsetY = (windowHeight - canvasHeight) /2;
+
+  createCanvas(canvasWidth, canvasHeight);
+
+  // Move the canvas element by setting its position in the dom and use the offsetX/Y values
+  let canvasElement = document.querySelector("canvas");
+  canvasElement.style.position = "relative";
+  canvasElement.style.left = canvasOffsetX + "px";
+   canvasElement.style.top = canvasOffsetY + "px";
+
+
     hoverInfo = document.getElementById('hover-info');
-    scholarshipSlider = document.getElementById('scholarship-slider');
-    studyHoursSlider = document.getElementById('study-hours-slider');
     setupFilterListeners();
     filterData();
 }
 
+
 function draw() {
-    background(240);
-    drawSankeyDiagram();
-    if (hoveredLink) {
-        drawHoverInfo(hoveredLink);
-    }
+  background(240);
+  push(); // Save current drawing settings
+   translate(canvasOffsetX, canvasOffsetY);
+  drawSankeyDiagram();
+  if (hoveredLink) {
+      drawHoverInfo(hoveredLink);
+  }
+   pop();
 }
 
 function drawHoverInfo(link) {
@@ -43,9 +59,9 @@ function drawHoverInfo(link) {
         let content = `Link Value: ${link.value} (${percentage}%)`;
       
         hoverInfo.style.display = 'block';
-      hoverInfo.style.left = mouseX + 10 + 'px';
-      hoverInfo.style.top = mouseY + 10 + 'px';
-      hoverInfo.innerHTML = content;
+        hoverInfo.style.left = mouseX + 10 + 'px';
+        hoverInfo.style.top = mouseY + 10 + 'px';
+        hoverInfo.innerHTML = content;
   }
 }
 
@@ -54,52 +70,38 @@ function hideHoverInfo() {
 }
 
 function setupFilterListeners() {
-    document.getElementById('age-filter').addEventListener('change', filterData);
-    document.getElementById('gender-filter').addEventListener('change', filterData);
-    scholarshipSlider.addEventListener('input', filterData);
-    document.getElementById('additional-work-filter').addEventListener('change', filterData);
-    document.getElementById('artistic-sports-filter').addEventListener('change', filterData);
-    studyHoursSlider.addEventListener('input', filterData);
-    document.getElementById('reading-freq-non-sci-filter').addEventListener('change', filterData);
-    document.getElementById('reading-freq-sci-filter').addEventListener('change', filterData);
-    document.getElementById('class-attendance-filter').addEventListener('change', filterData);
+   document.querySelectorAll('#filter-panel input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', filterData);
+    });
 }
 
 function filterData() {
-  let ageFilter = document.getElementById('age-filter').value;
-  let genderFilter = document.getElementById('gender-filter').value;
-  let scholarshipValue = parseInt(scholarshipSlider.value);
-  let additionalWorkFilter = document.getElementById('additional-work-filter').value;
-  let artisticSportsFilter = document.getElementById('artistic-sports-filter').value;
-  let studyHoursValue = parseInt(studyHoursSlider.value);
-  let readingNonSciFilter = document.getElementById('reading-freq-non-sci-filter').value;
-  let readingSciFilter = document.getElementById('reading-freq-sci-filter').value;
-  let classAttendanceFilter = document.getElementById('class-attendance-filter').value;
+  let ageFilters = Array.from(document.querySelectorAll('#filter-panel input[id^="age-filter-"]:checked')).map(cb => cb.value);
+  let genderFilters = Array.from(document.querySelectorAll('#filter-panel input[id^="gender-filter-"]:checked')).map(cb => cb.value);
+  let scholarshipFilters = Array.from(document.querySelectorAll('#filter-panel input[id^="scholarship-filter-"]:checked')).map(cb => parseInt(cb.value));
+  let additionalWorkFilters = Array.from(document.querySelectorAll('#filter-panel input[id^="additional-work-filter-"]:checked')).map(cb => cb.value);
+  let artisticSportsFilters = Array.from(document.querySelectorAll('#filter-panel input[id^="artistic-sports-filter-"]:checked')).map(cb => cb.value);
+  let studyHoursFilters = Array.from(document.querySelectorAll('#filter-panel input[id^="study-hours-filter-"]:checked')).map(cb => cb.value);
+  let readingNonSciFilters = Array.from(document.querySelectorAll('#filter-panel input[id^="reading-freq-non-sci-filter-"]:checked')).map(cb => cb.value);
+  let readingSciFilters = Array.from(document.querySelectorAll('#filter-panel input[id^="reading-freq-sci-filter-"]:checked')).map(cb => cb.value);
+  let classAttendanceFilters = Array.from(document.querySelectorAll('#filter-panel input[id^="class-attendance-filter-"]:checked')).map(cb => cb.value);
+
+
 
   filteredData = data.rows.filter(row => {
-      let ageMatch = ageFilter === 'all' || row.getString('Age') === ageFilter;
-      let genderMatch = genderFilter === 'all' || row.getString('Gender') === genderFilter;
-      let scholarshipMatch = scholarshipValue === 100 || (parseInt(row.getString('Scholarship').replace('%', '')) <= scholarshipValue);
-      let additionalWorkMatch = additionalWorkFilter === 'all' || row.getString('Additional Work') === additionalWorkFilter;
-      let artisticSportsMatch = artisticSportsFilter === 'all' || row.getString('Artistic/Sports Activity') === artisticSportsFilter;
-      let studyHoursMatch = studyHoursValue === 20 || (parseInt(row.getString('Weekly Study Hours').split('-')[0]) <= studyHoursValue);
-      let readingNonSciMatch = readingNonSciFilter === 'all' || row.getString('Reading frequency (non-scientific)') === readingNonSciFilter;
-      let readingSciMatch = readingSciFilter === 'all' || row.getString('Reading frequency (scientific)') === readingSciFilter;
-      let classAttendanceMatch = classAttendanceFilter === 'all' || row.getString('Class Attendance') === classAttendanceFilter;
+    let ageMatch = ageFilters.length === 0 || ageFilters.includes(row.getString('Age'));
+    let genderMatch = genderFilters.length === 0 || genderFilters.includes(row.getString('Gender'));
+    let scholarshipMatch = scholarshipFilters.length === 0 || scholarshipFilters.includes(parseInt(row.getString('Scholarship').replace('%','')));
+    let additionalWorkMatch = additionalWorkFilters.length === 0 || additionalWorkFilters.includes(row.getString('Additional Work'));
+    let artisticSportsMatch = artisticSportsFilters.length === 0 || artisticSportsFilters.includes(row.getString('Artistic/Sports Activity'));
+    let studyHoursMatch = studyHoursFilters.length === 0 || studyHoursFilters.includes(row.getString('Weekly Study Hours').split('-')[0]) || studyHoursFilters.includes(row.getString('Weekly Study Hours'));
+    let readingNonSciMatch = readingNonSciFilters.length === 0 || readingNonSciFilters.includes(row.getString('Reading frequency (non-scientific)'));
+      let readingSciMatch = readingSciFilters.length === 0 || readingSciFilters.includes(row.getString('Reading frequency (scientific)'));
+    let classAttendanceMatch = classAttendanceFilters.length === 0 || classAttendanceFilters.includes(row.getString('Class Attendance'));
 
-      return ageMatch && genderMatch && scholarshipMatch && additionalWorkMatch && artisticSportsMatch && studyHoursMatch && readingNonSciMatch && readingSciMatch && classAttendanceMatch;
-  });
-
-    updateSliderLabels();
+        return ageMatch && genderMatch && scholarshipMatch && additionalWorkMatch && artisticSportsMatch && studyHoursMatch && readingNonSciMatch && readingSciMatch && classAttendanceMatch;
+    });
     initializeData();
-}
-
-
-function updateSliderLabels(){
-  document.getElementById('scholarship-min-value').innerText = `0%` ;
-  document.getElementById('scholarship-max-value').innerText = `${scholarshipSlider.value}%`;
-   document.getElementById('study-hours-min-value').innerText = `0 hours` ;
-  document.getElementById('study-hours-max-value').innerText = `${studyHoursSlider.value}+ hours`;
 }
 
 
@@ -171,13 +173,13 @@ function initializeData() {
     })
      nodes.forEach(node => {
        if (node.category == "Note-Taking"){
-        node.x = (canvasWidth / 4) - 100; // fixed x coordinate for Note-Taking node
+        node.x = (canvasWidth / 4) - 150; // fixed x coordinate for Note-Taking node
       }
         else if (node.category == "Gender"){
-          node.x = (canvasWidth / 2) - 100; // fixed x coordinate for Gender node
+          node.x = (canvasWidth / 2) - 150; // fixed x coordinate for Gender node
         }
       else if (node.category == "CGPA"){
-          node.x = (canvasWidth / 4 * 3) - 100; // fixed x coordinate for CGPA node
+          node.x = (canvasWidth / 4 * 3) - 150; // fixed x coordinate for CGPA node
         }
     });
 }
@@ -241,18 +243,18 @@ function drawSankeyDiagram() {
 }
 
 function isMouseOverLink(startX, startY, endX, endY) {
-    let d = dist(mouseX, mouseY, startX, startY);
+    let d = dist(mouseX - canvasOffsetX, mouseY - canvasOffsetY, startX, startY);
     let totalLength = dist(startX, startY, endX, endY);
     let A = endY - startY;
     let B = startX - endX;
     let C = endX * startY - startX * endY;
-    let distFromLine = abs(A * mouseX + B * mouseY + C) / sqrt(A * A + B * B);
+    let distFromLine = abs(A * (mouseX - canvasOffsetX) + B * (mouseY - canvasOffsetY) + C) / sqrt(A * A + B * B);
     return distFromLine < linkThickness && d < totalLength ;
 }
 
 function isMouseOverNode(nodeX, nodeY){
-    return mouseX >= nodeX && mouseX <= nodeX + nodeWidth &&
-           mouseY >= nodeY && mouseY <= nodeY + nodeWidth;
+    return mouseX - canvasOffsetX >= nodeX && mouseX - canvasOffsetX <= nodeX + nodeWidth &&
+           mouseY - canvasOffsetY >= nodeY && mouseY - canvasOffsetY <= nodeY + nodeWidth;
 }
 
 function mouseClicked(){
@@ -266,7 +268,16 @@ function mouseClicked(){
 
 
 function windowResized() {
-    canvasWidth = windowWidth - 300;
-    canvasHeight = windowHeight;
+    canvasWidth = windowWidth * diagramWidthRatio - 300; // Use ratio of canvas width
+    canvasHeight = windowHeight* diagramWidthRatio; // Use ratio of canvas height
+
+    // Calculate offsets to center the canvas
+    canvasOffsetX = (windowWidth - 300 - canvasWidth) / 2;
+    canvasOffsetY = (windowHeight - canvasHeight) /2;
+
     resizeCanvas(canvasWidth, canvasHeight);
+   let canvasElement = document.querySelector("canvas");
+  canvasElement.style.position = "relative";
+  canvasElement.style.left = canvasOffsetX + "px";
+   canvasElement.style.top = canvasOffsetY + "px";
 }

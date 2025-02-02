@@ -7,78 +7,71 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="title">nah we dont need notes! do we?</div>
+    <div id="title">nah we dont need notes! do we?</div>
     <div id="filter-panel">
-        <label for="age-filter">Age Group:</label>
-        <select id="age-filter">
-            <option value="all">All</option>
-            <option value="18-21">18-21</option>
-            <option value="22-25">22-25</option>
-            <option value="26+">26+</option>
-        </select>
-
-        <label for="gender-filter">Gender:</label>
-        <select id="gender-filter">
-            <option value="all">All</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-        </select>
-
-        <div class="slider-container">
-            <label for="scholarship-slider" class="slider-label">Scholarship %:</label>
-            <input type="range" id="scholarship-slider" min="0" max="100" value="100" class="slider-input">
-            <div class="slider-values">
-              <span id="scholarship-min-value">0%</span>
-              <span id="scholarship-max-value">100%</span>
-            </div>
-        </div>
-    
-
-        <label for="additional-work-filter">Additional Work:</label>
-        <select id="additional-work-filter">
-            <option value="all">All</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
-
-        <label for="artistic-sports-filter">Artistic/Sports:</label>
-        <select id="artistic-sports-filter">
-            <option value="all">All</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
-
-          <div class="slider-container">
-            <label for="study-hours-slider" class="slider-label">Weekly Study Hours:</label>
-             <input type="range" id="study-hours-slider" min="0" max="20" value="20" class="slider-input">
-            <div class="slider-values">
-              <span id="study-hours-min-value">0 hours</span>
-              <span id="study-hours-max-value">20+ hours</span>
-             </div>
+        <div class="filter-group">
+           <label>Age Group:</label>
+           <input type="checkbox" id="age-filter-18-21" value="18-21"><label for="age-filter-18-21">18-21</label><br>
+           <input type="checkbox" id="age-filter-22-25" value="22-25"><label for="age-filter-22-25">22-25</label><br>
+           <input type="checkbox" id="age-filter-26+" value="26+"><label for="age-filter-26+">26+</label>
         </div>
 
-      <label for="reading-freq-non-sci-filter">Reading (Non-Sci):</label>
-        <select id="reading-freq-non-sci-filter">
-           <option value="all">All</option>
-           <option value="None">None</option>
-           <option value="Sometimes">Sometimes</option>
-           <option value="Often">Often</option>
-        </select>
-        
-        <label for="reading-freq-sci-filter">Reading (Sci):</label>
-        <select id="reading-freq-sci-filter">
-          <option value="all">All</option>
-            <option value="None">None</option>
-            <option value="Sometimes">Sometimes</option>
-            <option value="Often">Often</option>
-        </select>
-         <label for="class-attendance-filter">Class Attendance:</label>
-        <select id="class-attendance-filter">
-           <option value="all">All</option>
-           <option value="Always">Always</option>
-            <option value="Sometimes">Sometimes</option>
-            <option value="Never">Never</option>
-        </select>
+        <div class="filter-group">
+           <label>Gender:</label>
+           <input type="checkbox" id="gender-filter-male" value="male"><label for="gender-filter-male">Male</label><br>
+           <input type="checkbox" id="gender-filter-female" value="female"><label for="gender-filter-female">Female</label>
+        </div>
+
+       <div class="filter-group">
+           <label>Scholarship %:</label>
+            <input type="checkbox" id="scholarship-filter-25" value="25"><label for="scholarship-filter-25">25%</label><br>
+            <input type="checkbox" id="scholarship-filter-50" value="50"><label for="scholarship-filter-50">50%</label><br>
+            <input type="checkbox" id="scholarship-filter-75" value="75"><label for="scholarship-filter-75">75%</label><br>
+            <input type="checkbox" id="scholarship-filter-100" value="100"><label for="scholarship-filter-100">100%</label>
+       </div>
+
+
+        <div class="filter-group">
+            <label>Additional Work:</label>
+            <input type="checkbox" id="additional-work-filter-yes" value="Yes"><label for="additional-work-filter-yes">Yes</label><br>
+            <input type="checkbox" id="additional-work-filter-no" value="No"><label for="additional-work-filter-no">No</label>
+        </div>
+
+        <div class="filter-group">
+           <label>Artistic/Sports:</label>
+            <input type="checkbox" id="artistic-sports-filter-yes" value="Yes"><label for="artistic-sports-filter-yes">Yes</label><br>
+           <input type="checkbox" id="artistic-sports-filter-no" value="No"><label for="artistic-sports-filter-no">No</label>
+        </div>
+
+
+        <div class="filter-group">
+           <label>Weekly Study Hours:</label>
+           <input type="checkbox" id="study-hours-filter-5" value="5"><label for="study-hours-filter-5"><5 hours</label><br>
+           <input type="checkbox" id="study-hours-filter-10" value="10"><label for="study-hours-filter-10">6-10 hours</label><br>
+           <input type="checkbox" id="study-hours-filter-20" value="20"><label for="study-hours-filter-20">11-20 hours</label><br>
+           <input type="checkbox" id="study-hours-filter-20plus" value="20+"><label for="study-hours-filter-20plus">20+ hours</label>
+       </div>
+
+
+        <div class="filter-group">
+           <label>Reading (Non-Sci):</label>
+           <input type="checkbox" id="reading-freq-non-sci-filter-none" value="None"><label for="reading-freq-non-sci-filter-none">None</label><br>
+           <input type="checkbox" id="reading-freq-non-sci-filter-sometimes" value="Sometimes"><label for="reading-freq-non-sci-filter-sometimes">Sometimes</label><br>
+           <input type="checkbox" id="reading-freq-non-sci-filter-often" value="Often"><label for="reading-freq-non-sci-filter-often">Often</label>
+       </div>
+
+        <div class="filter-group">
+           <label>Reading (Sci):</label>
+            <input type="checkbox" id="reading-freq-sci-filter-none" value="None"><label for="reading-freq-sci-filter-none">None</label><br>
+            <input type="checkbox" id="reading-freq-sci-filter-sometimes" value="Sometimes"><label for="reading-freq-sci-filter-sometimes">Sometimes</label><br>
+            <input type="checkbox" id="reading-freq-sci-filter-often" value="Often"><label for="reading-freq-sci-filter-often">Often</label>
+       </div>
+      <div class="filter-group">
+         <label>Class Attendance:</label>
+           <input type="checkbox" id="class-attendance-filter-always" value="Always"><label for="class-attendance-filter-always">Always</label><br>
+           <input type="checkbox" id="class-attendance-filter-sometimes" value="Sometimes"><label for="class-attendance-filter-sometimes">Sometimes</label><br>
+           <input type="checkbox" id="class-attendance-filter-never" value="Never"><label for="class-attendance-filter-never">Never</label>
+        </div>
     </div>
     
     <div id="hover-info"></div>

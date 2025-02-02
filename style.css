@@ -1,72 +1,58 @@
-body { 
-  margin: 0; 
-  overflow-x: hidden; 
+body {
+  margin: 0;
+  overflow-x: hidden;
   font-family: sans-serif;
 }
 
-canvas { 
-  display: block; 
-  padding-top: 50px;
+canvas {
+  display: block;
 }
 
 #filter-panel {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    z-index: 1000;
-    width: 250px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  width: 250px;
+}
+
+#filter-panel .filter-group {
+  margin-bottom: 10px;
 }
 
 #filter-panel label {
-  display: block;
+  display: block; /* Titles are block-level elements */
   margin-bottom: 5px;
+  font-weight: bold; /* Make titles bold */
 }
 
-#filter-panel select {
-  margin-bottom: 10px;
-  width: 100%;
-  padding: 5px;
-  box-sizing: border-box;
+#filter-panel .filter-group input[type="checkbox"] {
+  display: inline-block; /* Checkboxes are inline-block */
+  margin-right: 5px; /* Space between checkboxes */
 }
 
-.slider-container{
-  margin-bottom: 10px;
+#filter-panel .filter-group label[for] { /* style checkbox label */
+  display: inline-block;
+  margin-right: 10px;
+  font-weight: normal;/* Reset checkbox labels font-weight */
 }
 
 #hover-info {
-    position: absolute;
-    background-color: white;
-    border: 1px solid black;
-    padding: 5px;
-    display: none;
-    z-index: 1001;
-}
-
-.slider-label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.slider-input {
-   width: 100%;
-}
-
-.slider-values{
-   display: flex;
-   justify-content: space-between;
-}
-
-.slider-values span{
-  font-size: 0.8em;
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+  display: none;
+  z-index: 1001;
 }
 
 #title {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 2em;
-    font-weight: bold;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 2em;
+  font-weight: bold;
 }

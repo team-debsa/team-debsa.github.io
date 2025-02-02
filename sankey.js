@@ -3,9 +3,9 @@ let nodes;
 let links;
 let canvasWidth;
 let canvasHeight;
-let nodeWidth = 20;  // Increased node width
-let nodePadding = 50; // Increased node padding
-let linkThickness = 12; // Increased link thickness
+let nodeWidth = 20;
+let nodePadding = 50;
+let linkThickness = 12;
 let hoverInfo;
 let filteredData = [];
 let hoveredLink = null;
@@ -13,7 +13,7 @@ let selectedNode = null;
 let canvasOffsetX;
 let canvasOffsetY;
 let diagramWidthRatio = 0.8; // Ratio of canvas used by the diagram
-
+let linkInfoDiv;
 
 function preload() {
     data = loadTable('Student Performance Note Taking.csv', 'csv', 'header');
@@ -24,8 +24,8 @@ function setup() {
     canvasHeight = windowHeight * diagramWidthRatio; // Use ratio of canvas height
 
     // Calculate offsets to center the canvas
-   canvasOffsetX = (windowWidth  - 300 - canvasWidth) / 2;
-   canvasOffsetY = (windowHeight - canvasHeight) /2;
+   canvasOffsetX = (windowWidth - 300 - canvasWidth) / 2;
+  canvasOffsetY = (windowHeight - canvasHeight) /2;
 
   createCanvas(canvasWidth, canvasHeight);
 
@@ -37,6 +37,7 @@ function setup() {
 
 
     hoverInfo = document.getElementById('hover-info');
+    linkInfoDiv = document.getElementById('link-info');
     setupFilterListeners();
     filterData();
 }
@@ -57,7 +58,7 @@ function drawHoverInfo(link) {
   if (link) {
         let percentage = (link.value / filteredData.length * 100).toFixed(1);
         let content = `Link Value: ${link.value} (${percentage}%)`;
-      
+
         hoverInfo.style.display = 'block';
         hoverInfo.style.left = mouseX + 10 + 'px';
         hoverInfo.style.top = mouseY + 10 + 'px';
@@ -173,21 +174,23 @@ function initializeData() {
     })
      nodes.forEach(node => {
        if (node.category == "Note-Taking"){
-        node.x = (canvasWidth / 4) - 150; // fixed x coordinate for Note-Taking node
+        node.x = (canvasWidth / 4) - 100; // fixed x coordinate for Note-Taking node
       }
         else if (node.category == "Gender"){
-          node.x = (canvasWidth / 2) - 150; // fixed x coordinate for Gender node
+          node.x = (canvasWidth / 2) - 100; // fixed x coordinate for Gender node
         }
       else if (node.category == "CGPA"){
-          node.x = (canvasWidth / 4 * 3) - 150; // fixed x coordinate for CGPA node
+          node.x = (canvasWidth / 4 * 3) - 100; // fixed x coordinate for CGPA node
         }
     });
+        updateLinkInfo();
 }
 
 
 function drawSankeyDiagram() {
   hoveredLink = null; // reset the hovered link
-  
+    linkInfoDiv.innerHTML = ''; // Clear previous link info
+    
     // Draw Links
    for (let link of links) {
     if (link.source && link.target) { // check for null objects
@@ -211,6 +214,7 @@ function drawSankeyDiagram() {
           linkColor = color(150, 150, 250, 255);
           hoveredLink = link;
           cursor(HAND);
+          updateLinkInfo(link);
         } else {
           cursor(ARROW);
         }
@@ -266,11 +270,28 @@ function mouseClicked(){
     }
 }
 
+function updateLinkInfo(link = null) {
+
+      if (link)
+          {
+          let percentage = (link.value / filteredData.length * 100).toFixed(1);
+                if (link.source.category === "Note-Taking" && link.target.category === "Gender")
+              {
+               linkInfoDiv.innerHTML = `Percentage of students that take ${link.source.name} notes that are ${link.target.name}: ${percentage}%`;
+                }
+                else if (link.source.category === "Gender" && link.target.category === "CGPA"){
+                    linkInfoDiv.innerHTML = `Percentage of ${link.source.name} students that have a CGPA of ${link.target.name}: ${percentage}%`;
+                }
+         }
+        else {
+      linkInfoDiv.innerHTML = "No links hovered.";
+    }
+}
 
 function windowResized() {
     canvasWidth = windowWidth * diagramWidthRatio - 300; // Use ratio of canvas width
     canvasHeight = windowHeight* diagramWidthRatio; // Use ratio of canvas height
-
+    
     // Calculate offsets to center the canvas
     canvasOffsetX = (windowWidth - 300 - canvasWidth) / 2;
     canvasOffsetY = (windowHeight - canvasHeight) /2;

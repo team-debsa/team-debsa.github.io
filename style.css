@@ -56,3 +56,16 @@ canvas {
   font-size: 2em;
   font-weight: bold;
 }
+
+#link-info {
+  position: absolute;
+  left: 10px; /* or any margin as desired */
+  bottom: 10px; /* or any margin as desired */
+    width: 250px;
+  padding: 10px;
+  background-color: #f0f0f0;
+    border: 1px solid #ccc;
+  font-size: 1em;
+  text-align: left;
+  z-index: 1000; /* Ensure it's above the canvas */
+}

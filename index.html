@@ -3,11 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Performance Visualization</title>
+    <title>Write On Track!</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="title">nah we dont need notes! do we?</div>
+ 
+    <div class="container">
+        <header class="header">
+            <img src="https://em-content.zobj.net/source/apple/391/graduation-cap_1f393.png" alt="Graduation Cap" class="grad-cap">
+            <h1>Write On Track!</h1>
+            <div class="banner">
+                <p class="subtitle">Mapping the Impact of Note-Taking on Academic Success</p>
+            </div>
+            <br>
+            <p class="subtitle">Our visualization explores the impact of <span class="highlight">note-taking frequency</span> on students' <span class="highlight">academic performance</span>, considering multiple factors such as gender, scholarship status, additional work, artistic/sports activities, weekly study hours, reading habits, and class attendance.</p>
+        </header>
+
+        <section class="audience-section">
+            <h2 style="font-size: 3rem; color: #282D46; margin-bottom: 2rem;">Designed for</h2>
+            <div class="audience-grid">
+                <div class="audience-card">
+                    <h3>Students</h3>
+                    <p>To gain insights into how study habits (like note-taking) influence their performance.</p>
+                </div>
+                <div class="audience-card">
+                    <h3>EdTech Designers</h3>
+                    <p>To develop tools that encourage effective learning behaviors.</p>
+                </div>
+                <div class="audience-card">
+                    <h3>University Administrators & Policymakers</h3>
+                    <p>To inform decisions on academic support programs and student interventions.</p>
+                </div>
+                <div class="audience-card">
+                    <h3>Educators & Academic Researchers</h3>
+                    <p>To understand patterns in student behavior and learning strategies.</p>
+                </div>
+            </div>
+        </section>
+        <br><br>
+
+        <h2 style="font-size: 3rem; color: #282D46; margin-bottom: 2rem;">Why should you care?</h2>
+
+        <section class="why-section">
+            <ul>
+                <p style="font-size: 1.75rem; color: #282D46; margin-bottom: 2rem;">Note-taking is a fundamental learning strategy, but how often does it actually contribute to better academic performance? Our visualization helps answer that question by:</p>
+                <li>Identifying trends and patterns in student success.</li>
+                <li>Highlighting disparities based on demographics and other variables.</li>
+                <li>Encouraging data-driven decisions to improve learning outcomes.</li>
+                <li>Providing actionable insights for students to optimize their study habits.</li>
+            </ul>
+            <span class="emoji-decoration" style="right: 2rem;">📚</span>            
+        </section>
+    </div>
+
+  <section id="visualization-section">
     <div id="filter-panel">
         <div class="filter-group">
            <label>Age Group:</label>
@@ -73,10 +125,15 @@
            <input type="checkbox" id="class-attendance-filter-never" value="Never"><label for="class-attendance-filter-never">Never</label>
         </div>
     </div>
-    
-    <div id="hover-info"></div>
-    <div id="link-info"></div>
-    <script src="p5.js"></script>
+
+     <div id="sankey-container">
+       <div id="hover-info"></div>
+        <div id="link-info"></div>
+          <canvas id="sankey-canvas"></canvas>
+    </div>
+ </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
     <script src="sankey.js"></script>
 </body>
 </html>

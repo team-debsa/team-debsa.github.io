@@ -2,71 +2,310 @@ body {
   margin: 0;
   overflow-x: hidden;
   font-family: sans-serif;
+  background-color: #f8f8f8; /* Light background */
 }
 
-canvas {
-  display: block;
+/* General Styling */
+h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #282D46;
+  margin-bottom: 15px;
 }
 
-#filter-panel {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  z-index: 1000;
-  width: 250px;
+
+
+/* Header Section */
+#website-header {
+  text-align: center;
+  padding: 80px 20px; /* Add padding for spacing */
+  background-color: #fff; /* White background */
+  margin-bottom: 40px; /* Add margin below the header */
 }
 
-#filter-panel .filter-group {
+.header-content {
+  width: 80%;
+  max-width: 988px; /* Match width */
+  margin: 0 auto;
+}
+
+.header-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 72px;
+  font-weight: 600;
+  color: #282D46;
   margin-bottom: 10px;
 }
 
+.header-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px; /* Adjusted */
+  font-weight: 500;
+  color: #282D46;
+  margin-bottom: 20px;
+}
+
+.header-description {
+  font-family: 'Poppins', sans-serif; /* Adjust for better readability */
+  font-size: 26px; /* Adjust for better readability */
+  font-weight: 500;
+  color: #282D46; /* Darker */
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.header-image {
+  font-size: 150px;
+  color: #282D46;
+  font-family: Fenomen Sans;
+  font-weight: 900;
+}
+
+/* Why Care Section */
+#why-care {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+#why-care ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px auto;
+  width: 80%;
+  max-width: 700px;
+}
+
+#why-care li {
+  margin-bottom: 15px;
+  font-size: 26px; /* adjust to better fit text */
+}
+
+.why-care-image {
+  font-size: 150px;
+  color: #282D46;
+  font-family: Fenomen Sans;
+  font-weight: 900;
+  margin-top: 20px;
+}
+
+/* Designed For Section */
+#designed-for {
+  padding: 40px 20px;
+  background-color: #fff;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.designed-for-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.designed-for-item {
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 25px;
+  box-shadow: 0px 35px 40px 20px rgba(0, 0, 0, .07);
+}
+
+.designed-for-item h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 28px; /* Adjust for better readability */
+  font-weight: 600;
+  color: #282D46;
+  margin-bottom: 15px;
+}
+
+.designed-for-item p {
+  font-size: 26px;
+}
+
+/* Visualization section */
+#visualization-section{
+display: flex;
+justify-content: center; /* Horizontally center */
+align-items: flex-start;   /* Vertically align to the top */
+margin: 20px;
+}
+
+/*Sankey container */
+#sankey-container {
+position: relative;  /* Add position: relative */
+width: 80%; /* Adjust as necessary */
+max-width: 900px; /* Maximum width */
+margin: 0 auto;
+}
+
+/* Filter Panel */
+#filter-panel {
+  width: 250px; /* Set a fixed width */
+  margin-left: 20px; /* Spacing from Sankey */
+  padding: 20px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+
 #filter-panel label {
-  display: block; /* Titles are block-level elements */
+  display: block;
   margin-bottom: 5px;
-  font-weight: bold; /* Make titles bold */
 }
 
-#filter-panel .filter-group input[type="checkbox"] {
-  display: inline-block; /* Checkboxes are inline-block */
-  margin-right: 5px; /* Space between checkboxes */
+#filter-panel select {
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
-#filter-panel .filter-group label[for] { /* style checkbox label */
-  display: inline-block;
-  margin-right: 10px;
-  font-weight: normal;/* Reset checkbox labels font-weight */
-}
-
-#hover-info {
+#hover-info, #link-info {
   position: absolute;
   background-color: white;
   border: 1px solid black;
   padding: 5px;
   display: none;
   z-index: 1001;
+  font-size: 0.85em; /* make the link info slightly smaller */
 }
 
-#title {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+#sankey-canvas{
+position: relative;
+display: block;
+margin: 0 auto;
+}
+
+/**/
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+  position: relative;
+}
+
+.header {
   text-align: center;
-  font-size: 2em;
-  font-weight: bold;
+  margin-bottom: 4rem;
 }
 
-#link-info {
+.header h1 {
+  font-size: 4.5rem;
+  color: #282D46;
+  font-weight: 600;
+  margin: 1rem 0;
+}
+
+.header .highlight {
+  background: #E0E0E0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.subtitle {
+  font-size: 1.625rem;
+  color: #282D46;
+  line-height: 1.8;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header .banner {
+  background: white;
+  border-radius: 25px;
+  padding: 1.5rem;
+  margin: 2rem auto;
+  max-width: 850px;
+  box-shadow: 0px 35px 40px 20px rgba(0, 0, 0, .07);
+}
+
+.audience-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+  margin: 3rem 0;
+}
+
+.audience-card {
+  background: white;
+  border-radius: 25px;
+  padding: 3rem;
+  min-height: 220px;
+  box-shadow: 0px 35px 40px 20px rgba(0, 0, 0, .07);
+}
+
+.audience-card h3 {
+  font-size: 1.75rem;
+  color: #282D46;
+  margin-bottom: 1rem;
+}
+
+.audience-card p {
+  font-size: 1.5rem;
+  color: #282D46;
+  font-family: 'Constantia', serif;
+}
+
+.why-section {
+  background: white;
+  border-radius: 25px;
+  padding: 4rem;
+  margin: 3rem 0;
+  box-shadow: 0px 35px 40px 20px rgba(0, 0, 0, .07);
+  position: relative;
+  margin-top: 3rem;
+}
+
+.why-section ul {
+  font-size: 1.75rem;
+  color: #282D46;
+  font-family: 'Constantia', serif;
+  list-style: none;
+}
+
+.why-section li {
+  margin: 1.5rem 0;
+}
+
+.emoji-decoration {
+  font-size: 6rem;
   position: absolute;
-  left: 10px; /* or any margin as desired */
-  bottom: 10px; /* or any margin as desired */
-    width: 250px;
-  padding: 10px;
-  background-color: #f0f0f0;
-    border: 1px solid #ccc;
-  font-size: 1em;
-  text-align: left;
-  z-index: 1000; /* Ensure it's above the canvas */
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+      font-size: 3rem;
+  }
+  
+  .audience-grid {
+      grid-template-columns: 1fr;
+  }
+
+  .why-section {
+      padding: 2rem;
+  }
+
+  .why-section h2 {
+      font-size: 2rem;
+  }
+
+  .why-section ul {
+      font-size: 1.5rem;
+  }
+
+  .emoji-decoration {
+      display: none;
+  }
 }

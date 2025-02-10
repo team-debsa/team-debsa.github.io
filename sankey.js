@@ -27,13 +27,17 @@ function setup() {
    canvasOffsetX = (windowWidth - canvasWidth);
   canvasOffsetY = (windowHeight - canvasHeight);
 
-  createCanvas(canvasWidth, canvasHeight);
+  // CREATE CANVAS INSIDE sankey-container
 
-  // Move the canvas element by setting its position in the dom and use the offsetX/Y values
-  let canvasElement = document.querySelector("canvas");
-  canvasElement.style.position = "relative";
-  canvasElement.style.left = canvasOffsetX + "px";
-   canvasElement.style.top = canvasOffsetY + "px";
+    let container = document.getElementById("sankey-container");
+
+    let myCanvas = createCanvas(canvasWidth, canvasHeight);
+    myCanvas.parent(container);
+
+  //let canvasElement = document.querySelector("canvas");
+  //canvasElement.style.position = "relative";
+  //canvasElement.style.left = canvasOffsetX + "px";
+  //canvasElement.style.top = canvasOffsetY + "px";
 
 
     hoverInfo = document.getElementById('hover-info');
@@ -59,9 +63,8 @@ function drawHoverInfo(link) {
         let percentage = (link.value / filteredData.length * 100).toFixed(1);
         let content = `Link Value: ${link.value} (${percentage}%)`;
 
-        hoverInfo.style.display = 'block';
-        hoverInfo.style.left = mouseX + 10 + 'px';
-        hoverInfo.style.top = mouseY + 10 + 'px';
+        hoverInfo.style.left = mouseX + 'px';
+        hoverInfo.style.top = mouseY + 'px';
         hoverInfo.innerHTML = content;
   }
 }

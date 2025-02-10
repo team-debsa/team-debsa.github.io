@@ -137,7 +137,6 @@ h2 {
 
 #sankey-container {
     position: relative;
-    width: 80%;
     max-width: 1200px;
     margin: 20px auto; /* Add margin for spacing */
 }

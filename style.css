@@ -165,7 +165,7 @@ h2 {
     margin-right: 5px;
 }
 
-#hover-info, #link-info {
+#link-info {
     position: relative;
     background-color: white;
     border: 1px solid black;
@@ -178,6 +178,21 @@ h2 {
     width: 80%;   /* take 80% of the width */
     max-width: 800px; /*set the max width*/
     min-height: 30px; /* Ensure it takes space even if empty */
+}
+
+#hover-info-dontuse {
+  position: relative;
+  background-color: white;
+  padding: 5px;
+  margin: 0 auto 10px; /* center it */
+  text-align: center;  /*center text*/
+  font-size: 0.85em;
+  max-width: 200px; /*set the max width*/
+  min-height: 30px; /* Ensure it takes space even if empty */
+}
+
+#hover-info {
+  display: none;
 }
 
 #sankey-canvas {

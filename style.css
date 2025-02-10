@@ -13,8 +13,6 @@ h2 {
   margin-bottom: 15px;
 }
 
-
-
 /* Header Section */
 #website-header {
   text-align: center;
@@ -125,57 +123,68 @@ h2 {
 }
 
 /* Visualization section */
-#visualization-section{
-display: flex;
-justify-content: center; /* Horizontally center */
-align-items: flex-start;   /* Vertically align to the top */
-margin: 20px;
+#visualization-section {
+    width: 100%;
+    margin-top: 20px;
 }
 
-/*Sankey container */
+#visualization-container {
+    display: flex;
+    flex-direction: column; /* Stack filter and Sankey vertically */
+    align-items: center; /* Center content horizontally */
+    padding: 20px;
+}
+
 #sankey-container {
-position: relative;  /* Add position: relative */
-width: 80%; /* Adjust as necessary */
-max-width: 900px; /* Maximum width */
-margin: 0 auto;
+    position: relative;
+    width: 80%;
+    max-width: 1200px;
+    margin: 20px auto; /* Add margin for spacing */
 }
 
-/* Filter Panel */
+/* Horizontal Filter Panel */
 #filter-panel {
-  width: 250px; /* Set a fixed width */
-  margin-left: 20px; /* Spacing from Sankey */
-  padding: 20px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  z-index: 1000;
+    display: flex;
+    justify-content: space-around; /* Distribute groups evenly */
+    flex-wrap: wrap; /* Allow groups to wrap if needed */
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 20px; /* Add margin below the filter */
+    width: 100%; /* Full width */
+    max-width: 1200px;
+    box-sizing: border-box; /* Include padding in width */
 }
 
-#filter-panel label {
-  display: block;
-  margin-bottom: 5px;
+.filter-group {
+    margin: 5px;
+    text-align: left; /* Align labels and checkboxes */
 }
 
-#filter-panel select {
-  margin-bottom: 10px;
-  width: 100%;
-  padding: 5px;
-  box-sizing: border-box;
+.filter-group label {
+    display: inline-block;
+    margin-right: 5px;
 }
 
 #hover-info, #link-info {
-  position: absolute;
-  background-color: white;
-  border: 1px solid black;
-  padding: 5px;
-  display: none;
-  z-index: 1001;
-  font-size: 0.85em; /* make the link info slightly smaller */
+    position: relative;
+    background-color: white;
+    border: 1px solid black;
+    padding: 5px;
+    display: block;
+    margin: 0 auto 10px; /* center it */
+    text-align: center;  /*center text*/
+    z-index: 1001;
+    font-size: 0.85em;
+    width: 80%;   /* take 80% of the width */
+    max-width: 800px; /*set the max width*/
+    min-height: 30px; /* Ensure it takes space even if empty */
 }
 
-#sankey-canvas{
-position: relative;
-display: block;
-margin: 0 auto;
+#sankey-canvas {
+    position: relative;
+    display: block;
+    margin: 0 auto;
 }
 
 /**/

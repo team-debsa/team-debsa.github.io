@@ -20,12 +20,12 @@ function preload() {
 }
 
 function setup() {
-    canvasWidth = windowWidth * diagramWidthRatio - 300; // Use ratio of canvas width
+    canvasWidth = windowWidth * diagramWidthRatio; // Use ratio of canvas width
     canvasHeight = windowHeight * diagramWidthRatio; // Use ratio of canvas height
 
     // Calculate offsets to center the canvas
-   canvasOffsetX = (windowWidth - canvasWidth) / 3;
-  canvasOffsetY = (windowHeight - canvasHeight) /2;
+   canvasOffsetX = (windowWidth - canvasWidth);
+  canvasOffsetY = (windowHeight - canvasHeight);
 
   createCanvas(canvasWidth, canvasHeight);
 

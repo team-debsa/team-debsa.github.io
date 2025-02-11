@@ -59,33 +59,6 @@ h2 {
   font-weight: 900;
 }
 
-/* Why Care Section */
-#why-care {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-#why-care ul {
-  list-style: none;
-  padding: 0;
-  margin: 20px auto;
-  width: 80%;
-  max-width: 700px;
-}
-
-#why-care li {
-  margin-bottom: 15px;
-  font-size: 26px; /* adjust to better fit text */
-}
-
-.why-care-image {
-  font-size: 150px;
-  color: #282D46;
-  font-family: Fenomen Sans;
-  font-weight: 900;
-  margin-top: 20px;
-}
-
 /* Designed For Section */
 #designed-for {
   padding: 40px 20px;
@@ -167,17 +140,15 @@ h2 {
 
 #link-info {
     position: relative;
-    background-color: white;
-    border: 1px solid black;
     padding: 5px;
     display: block;
     margin: 0 auto 10px; /* center it */
     text-align: center;  /*center text*/
     z-index: 1001;
-    font-size: 0.85em;
+    font-size: 1.3em;
     width: 80%;   /* take 80% of the width */
     max-width: 800px; /*set the max width*/
-    min-height: 30px; /* Ensure it takes space even if empty */
+    min-height: 50px; /* Ensure it takes space even if empty */
 }
 
 #hover-info-dontuse {
@@ -292,15 +263,13 @@ h2 {
 }
 
 .why-section ul {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   color: #282D46;
   font-family: 'Constantia', serif;
   list-style: none;
 }
 
-.why-section li {
-  margin: 1.5rem 0;
-}
+
 
 .emoji-decoration {
   font-size: 6rem;

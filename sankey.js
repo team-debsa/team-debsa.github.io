@@ -3,7 +3,7 @@ let nodes;
 let links;
 let canvasWidth;
 let canvasHeight;
-const nodeWidth = 20;
+const nodeWidth = 40;
 const nodePadding = 50;
 const linkThicknessScale = 0.5;
 let hoverInfo;
@@ -29,7 +29,7 @@ const colorScales = {
     "Study Hours": ["#ffcccc", "#ff9999", "#ff6666", "#ff3333"],
     "Reading Frequency": ["#ffedcc", "#ffdb99", "#ffc966"],
     "Class Attendance": ["#d2e6b5", "#b1cf86", "#AFD777"],
-    "CGPA": ["#ffccf2", "#ff99e6", "#ff66d9", "#ff33cc", "#cc0099"]
+    "CGPA": ["#FFD0DC", "#ffc2d1", "#ffb3c6", "#ff8fab", "#fb6f92"]
 };
 
 function preload() {
@@ -247,11 +247,11 @@ function initializeData() {
 
     // Set X positions per category
     let categoryXPositions = {
-        "Note-Taking": canvasWidth * 0.1,
-        "Study Hours": canvasWidth * 0.3,
-        "Reading Frequency": canvasWidth * 0.5,
-        "Class Attendance": canvasWidth * 0.7,
-        "CGPA": canvasWidth * 0.9
+        "Note-Taking": canvasWidth * 0.08,
+        "Study Hours": canvasWidth * 0.28,
+        "Reading Frequency": canvasWidth * 0.48,
+        "Class Attendance": canvasWidth * 0.68,
+        "CGPA": canvasWidth * 0.885
     };
 
     nodes.forEach(node => {
@@ -543,7 +543,7 @@ function drawSankeyDiagram() {
 
         
             // Draw the node with the calculated height
-            rect(node.x, node.y + sankeyVerticalOffset, nodeWidth, node.height);
+            rect(node.x, node.y + sankeyVerticalOffset, nodeWidth, node.height, 7);
         
             // Node label
             noStroke();
@@ -553,7 +553,11 @@ function drawSankeyDiagram() {
             textAlign(CENTER, CENTER);
         
             // Show number of students
-            text(`${node.name}`, node.x + nodeWidth / 2, node.y + node.height / 2 - 7 + sankeyVerticalOffset);
+            let label = node.name;
+            if (node.category === "Study Hours") {
+                label = label.replace(" hours", "h");
+            }
+            text(label, node.x + nodeWidth / 2, node.y + node.height / 2 - 7 + sankeyVerticalOffset);
             text(`(${node.count})`, node.x + nodeWidth / 2, node.y + node.height / 2 + 7 + sankeyVerticalOffset);
         });
     }

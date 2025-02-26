@@ -317,6 +317,22 @@ window.updateInsightPanel = function() {
     let highCgpaCount = filteredData.filter(row => row.getString('CGPA') === "3.50+").length;
     let highCgpaPercentage = studentCount > 0 ? (highCgpaCount / studentCount * 100).toFixed(1) : 0;
 
+    // If not enough data on high CGPA, consider 3.0-3.49
+    let targetCgpa = "3.50+";
+    let performanceDescriptor = "excellent";  // excellent/good/fairly good/ average
+    let alternativeCgpaCount = 0;
+
+    if (highCgpaCount === 0) {
+        alternativeCgpaCount = filteredData.filter(row => row.getString('CGPA') === "3.00-3.49").length;
+
+        if (alternativeCgpaCount > 0){
+          highCgpaCount = alternativeCgpaCount;
+          highCgpaPercentage = studentCount > 0 ? (highCgpaCount / studentCount * 100).toFixed(1) : 0;
+          targetCgpa = "3.00-3.49";
+          performanceDescriptor = "good";
+        }
+    }
+
     // Sort factors by correlation strength
     let sortedFactors = Object.keys(factorCorrelations)
         .filter(factor => factorCorrelations[factor] > 0)
@@ -324,13 +340,13 @@ window.updateInsightPanel = function() {
 
     // Primary Insight: The "quote area"
     let primaryInsight = '';
-    let strongestFactor = sortedFactors.length > 0 ? sortedFactors[0] : "No factors";
+    let strongestFactor = sortedFactors.length > 0 ? sortedFactors[0] : "No particular factor";
     let strongestPercentage = factorCorrelations[strongestFactor] * 100 || 0;
 
     primaryInsight = `
         Based on the current filters, <span class="comparison-text">${strongestFactor}</span> 
-        shows the strongest correlation with high academic performance (${strongestPercentage.toFixed(1)}% of students 
-        with excellent ${strongestFactor.toLowerCase()} achieve 3.5+ GPA).
+        shows the strongest correlation with ${performanceDescriptor} academic performance (${strongestPercentage.toFixed(1)}% of students 
+        with excellent ${strongestFactor.toLowerCase()} achieve ${targetCgpa} GPA).
     `;
 
     // Factor Impact Bars
@@ -360,10 +376,7 @@ window.updateInsightPanel = function() {
         <h2>Key Insights</h2>
         <div id="primary-insight" class="key-insight">
             ${primaryInsight}
-        </div>
-        <h3>Current Selection</h3>
-        <p><strong>Students:</strong> ${studentCount}</p>
-        <p><strong>High CGPA Students (3.5+):</strong> ${highCgpaCount} (${highCgpaPercentage}%)</p>
+        </div><br>
         ${factorImpactBars}
     `;
 
@@ -373,7 +386,10 @@ window.updateInsightPanel = function() {
 function updateLinkInfo() {
     if (!linkInfoDiv) return;
 
-    let content = '<h3>Study Habit Patterns</h3>';
+    let content = '<h2 class="selection-header">Study Habit Patterns</h2>';
+
+    content += `<p class="selection-info"><strong>Students:</strong> <span class="comparison-text">${filteredData.length}</span></p>`;
+    content += `<p class="selection-info"><strong>High CGPA Students:</strong> ${filteredData.filter(row => row.getString('CGPA') === "3.50+").length} i.e. <span class="comparison-text">${(filteredData.length > 0 ? (filteredData.filter(row => row.getString('CGPA') === "3.50+").length / filteredData.length * 100).toFixed(1) : 0)}%</span></p>`;
 
     if (selectedNode) {
         let nodeLinks = links.filter(link => link.source === selectedNode || link.target === selectedNode);
@@ -401,7 +417,7 @@ function updateLinkInfo() {
         let topPatterns = [...links].sort((a, b) => b.count - a.count).slice(0, 5);
 
         if (topPatterns.length > 0) {
-            content += '<h4>Top Study Patterns:</h4><ul>';
+            content += '<h4 class="top-study-patterns">Top Study Patterns:</h4><ul>';
 
             topPatterns.forEach(link => {
                 let percentage = (link.count / filteredData.length * 100).toFixed(1);
@@ -417,7 +433,7 @@ function updateLinkInfo() {
     linkInfoDiv.innerHTML = content;
 }
 
-const sankeyVerticalOffset = 20;
+const sankeyVerticalOffset = 0;
 
 function drawSankeyDiagram() {
     if (!nodes || nodes.length === 0 || !links || links.length === 0) {
@@ -565,7 +581,7 @@ function drawSankeyDiagram() {
   
   // New function to calculate node heights based on counts
   function calculateNodeHeights() {
-    const maxHeight = canvasHeight * 0.6; // Maximum height for nodes
+    const maxHeight = canvasHeight * 0.55; // Maximum height for nodes
     
     // Find max count to scale heights
     let maxCount = 0;

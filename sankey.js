@@ -749,20 +749,26 @@ function positionNodesVertically() {
             let control1Y = sourceY;
             let control2X = sourceX + (targetX - sourceX) * 0.6;
             let control2Y = targetY;
-  
-            // Simplified hit detection for bezier curves
+
             // Check if mouse is roughly along the path
-            let t = 0.5; // Parameter along bezier curve
-            let pointOnCurveX = bezierPoint(sourceX, control1X, control2X, targetX, t);
-            let pointOnCurveY = bezierPoint(sourceY, control1Y, control2Y, targetY, t);
-  
-            // Distance from mouse to curve point
-            let distance = dist(mx, my, pointOnCurveX, pointOnCurveY);
-  
-            // Adjust hit area based on link thickness
             let linkThickness = Math.max(10, link.count * 2);
-  
-            if (distance < linkThickness) {
+            let isHovering = false;
+            const numSamples = 10; // Increase for better accuracy
+
+            for (let i = 0; i <= numSamples; i++) {
+                let t = i / numSamples;
+                let pointOnCurveX = bezierPoint(sourceX, control1X, control2X, targetX, t);
+                let pointOnCurveY = bezierPoint(sourceY, control1Y, control2Y, targetY, t);
+
+                let distance = dist(mx, my, pointOnCurveX, pointOnCurveY);
+
+                if (distance < linkThickness / 2) { // Divide by 2 because we are checking distance from center
+                    isHovering = true;
+                    break;
+                }
+            }
+
+            if (isHovering) {
                 hoveredLink = link;
                 break;
             }

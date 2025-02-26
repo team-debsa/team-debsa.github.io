@@ -3,7 +3,7 @@ let nodes;
 let links;
 let canvasWidth;
 let canvasHeight;
-const nodeWidth = 40;
+const nodeWidth = 45;
 const nodePadding = 50;
 const linkThicknessScale = 0.5;
 let hoverInfo;
@@ -463,7 +463,7 @@ function drawSankeyDiagram() {
   
     sortedLinks.forEach(link => {
         // Link thickness is now based on the actual count value
-        let linkThickness = Math.max(2, link.count * 3); // Apply minimum thickness for visibility
+        let linkThickness = Math.max(5, link.count * 3); // Apply minimum thickness for visibility
         
         // Use the precalculated source and target positions
         let sourceX = link.source.x + nodeWidth;
@@ -695,7 +695,7 @@ function positionNodesVertically() {
                 link.sourceY = currentY + linkHeight / 2;
             
                 // Move down for next link
-                currentY += linkHeight;
+                currentY += linkHeight*0.9;
             });
         });
     }
@@ -720,7 +720,7 @@ function positionNodesVertically() {
                 link.targetY = currentY + linkHeight / 2;
             
                 // Move down for next link
-                currentY += linkHeight;
+                currentY += linkHeight*0.9;
             });
         });
     }

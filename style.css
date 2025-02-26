@@ -178,7 +178,7 @@ body {
   .legend {
     display: flex;
     justify-content: center;
-    margin: 40px;
+    margin: 20px;
     flex-wrap: wrap;
     gap: 20px;
   }

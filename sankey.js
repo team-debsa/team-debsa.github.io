@@ -4,7 +4,7 @@ let links;
 let canvasWidth;
 let canvasHeight;
 const nodeWidth = 20;
-const nodePadding = 150;
+const nodePadding = 50;
 const linkThicknessScale = 0.5;
 let hoverInfo;
 let filteredData = [];
@@ -20,7 +20,7 @@ let factorCorrelations = {};
 const noteTakingCategories = ["Never", "Sometimes", "Always"];
 const studyHoursCategories = ["<5 hours", "6-10 hours", "11-20 hours", "20+ hours"];
 const readingFreqCategories = ["None", "Sometimes", "Often"];
-const classAttendanceCategories = ["Never", "Sometimes", "Always"];
+const classAttendanceCategories = ["Sometimes", "Always"];
 const cgpaCategories = ["<2.00", "2.00-2.49", "2.50-2.99", "3.00-3.49", "3.50+"];
 
 // Color scales for better visual differentiation
@@ -28,7 +28,7 @@ const colorScales = {
     "Note-Taking": ["#cce5ff", "#99ccff", "#66b2ff"],
     "Study Hours": ["#ffcccc", "#ff9999", "#ff6666", "#ff3333"],
     "Reading Frequency": ["#ffedcc", "#ffdb99", "#ffc966"],
-    "Class Attendance": ["#e6ffcc", "#ccff99", "#b3ff66"],
+    "Class Attendance": ["#d2e6b5", "#b1cf86", "#AFD777"],
     "CGPA": ["#ffccf2", "#ff99e6", "#ff66d9", "#ff33cc", "#cc0099"]
 };
 
@@ -217,7 +217,7 @@ function initializeData() {
         "Note-Taking": ["Never", "Sometimes", "Always"],
         "Study Hours": ["<5 hours", "6-10 hours", "11-20 hours", "20+ hours"],
         "Reading Frequency": ["None", "Sometimes", "Often"],
-        "Class Attendance": ["Never", "Sometimes", "Always"],
+        "Class Attendance": ["Sometimes", "Always"],
         "CGPA": ["<2.00", "2.00-2.49", "2.50-2.99", "3.00-3.49", "3.50+"]
     };
 
@@ -417,332 +417,376 @@ function updateLinkInfo() {
     linkInfoDiv.innerHTML = content;
 }
 
-const sankeyVerticalOffset = 30;
+const sankeyVerticalOffset = 20;
 
 function drawSankeyDiagram() {
-  if (!nodes || nodes.length === 0 || !links || links.length === 0) {
-      textSize(20);
-      textAlign(CENTER, CENTER);
-      fill(100);
-      text("No data to display based on current filters.", canvasWidth / 2, canvasHeight / 2 + sankeyVerticalOffset);
-      return;
-  }
-
-  // Draw category labels
-  textSize(16);
-  textStyle(BOLD);
-  textAlign(CENTER);
-  fill(0);
-
-  let categoryXPositions = {
-      "Note-Taking": canvasWidth * 0.1,
-      "Study Hours": canvasWidth * 0.3,
-      "Reading Frequency": canvasWidth * 0.5,
-      "Class Attendance": canvasWidth * 0.7,
-      "CGPA": canvasWidth * 0.9
-  };
-
-  Object.keys(categoryXPositions).forEach(category => {
-      text(category, categoryXPositions[category], 60); 
-  });
-
-  // First pass: calculate node heights based on student count
-  calculateNodeHeights();
-  
-  // Second pass: position nodes vertically based on their heights
-  positionNodesVertically();
-  
-  // Third pass: calculate entry and exit positions for links
-  calculateLinkPositions();
-
-  // Draw links
-  noStroke();
-
-  // Sort links by count (descending) to draw thicker ones first
-  let sortedLinks = [...links].sort((a, b) => b.count - a.count);
-
-  sortedLinks.forEach(link => {
-      // Link thickness is now based on the actual count value
-      let linkThickness = Math.max(2, link.count * 2); // Apply minimum thickness for visibility
-      
-      // Use the precalculated source and target positions
-      let sourceX = link.source.x + nodeWidth;
-      let sourceY = link.sourceY + sankeyVerticalOffset;
-      let targetX = link.target.x;
-      let targetY = link.targetY + sankeyVerticalOffset;
-
-      // Calculate control points for curved links
-      let control1X = sourceX + (targetX - sourceX) * 0.4;
-      let control1Y = sourceY;
-      let control2X = sourceX + (targetX - sourceX) * 0.6;
-      let control2Y = targetY;
-
-      // Get color based on source node category
-      let sourceCategory = link.source.category;
-      let sourceIndex = noteTakingCategories.indexOf(link.source.name);
-
-      if (sourceCategory === "Study Hours") {
-          sourceIndex = studyHoursCategories.indexOf(link.source.name);
-      } else if (sourceCategory === "Reading Frequency") {
-          sourceIndex = readingFreqCategories.indexOf(link.source.name);
-      } else if (sourceCategory === "Class Attendance") {
-          sourceIndex = classAttendanceCategories.indexOf(link.source.name);
-      } else if (sourceCategory === "CGPA") {
-          sourceIndex = cgpaCategories.indexOf(link.source.name);
-      }
-
-      let linkColor = colorScales[sourceCategory][sourceIndex] || "#cccccc";
-
-      // Highlight the link if it's hovered
-      if (link === hoveredLink) {
-          fill(255, 255, 0, 200); // Highlighted color
-      } else if (selectedNode && (link.source === selectedNode || link.target === selectedNode)) {
-          fill(255, 165, 0, 150); // Orange for selected node connections
-      } else {
-          fill(linkColor);
-      }
-
-      // Draw bezier curve for link
-      beginShape();
-      vertex(sourceX, sourceY - linkThickness / 2);
-      bezierVertex(control1X, sourceY - linkThickness / 2, control2X, targetY - linkThickness / 2, targetX, targetY - linkThickness / 2);
-      vertex(targetX, targetY + linkThickness / 2);
-      bezierVertex(control2X, targetY + linkThickness / 2, control1X, sourceY + linkThickness / 2, sourceX, sourceY + linkThickness / 2);
-      endShape(CLOSE);
-  });
-
-  // Draw nodes
-  nodes.forEach(node => {
-      if (node.count === 0) return; // Skip empty nodes
-
-      let categoryIndex = 0;
-
-      if (node.category === "Note-Taking") {
-          categoryIndex = noteTakingCategories.indexOf(node.name);
-      } else if (node.category === "Study Hours") {
-          categoryIndex = studyHoursCategories.indexOf(node.name);
-      } else if (node.category === "Reading Frequency") {
-          categoryIndex = readingFreqCategories.indexOf(node.name);
-      } else if (node.category === "Class Attendance") {
-          categoryIndex = classAttendanceCategories.indexOf(node.name);
-      } else if (node.category === "CGPA") {
-          categoryIndex = cgpaCategories.indexOf(node.name);
-      }
-
-      // Highlight selected node
-      if (node === selectedNode) {
-          stroke(255, 165, 0);
-          strokeWeight(3);
-      } else {
-          noStroke();
-      }
-
-      fill(255, 255, 255, 200); // Rectangular white node with opacity 200/255
-      
-      // Width remains fixed, height is now proportional to count
-      let nodeLength = map(node.count, 0, filteredData.length, nodeWidth, nodeWidth * 4);
-
-      // Draw the node with the calculated height
-      rect(node.x, node.y + sankeyVerticalOffset, nodeWidth, node.height);
-
-      // Node label
-      noStroke();
-      fill(0);
-      textSize(14);
-      textAlign(CENTER, CENTER);
-
-      // Show number of students
-      text(`${node.name}`, node.x + nodeWidth / 2, node.y + node.height / 2 - 7 + sankeyVerticalOffset);
-      text(`(${node.count})`, node.x + nodeWidth / 2, node.y + node.height / 2 + 7 + sankeyVerticalOffset);
-  });
-}
-
-// New function to calculate node heights based on counts
-function calculateNodeHeights() {
-  const maxHeight = canvasHeight * 0.6; // Maximum height for nodes
-  
-  // Find max count to scale heights
-  let maxCount = 0;
-  nodes.forEach(node => {
-    if (node.count > maxCount) {
-      maxCount = node.count;
+    if (!nodes || nodes.length === 0 || !links || links.length === 0) {
+        textSize(20);
+        textAlign(CENTER, CENTER);
+        fill(100);
+        text("No data to display based on current filters.", canvasWidth / 2, canvasHeight / 2 + sankeyVerticalOffset);
+        return;
     }
-  });
   
-  // Calculate height for each node
-  nodes.forEach(node => {
-    // Scale height based on count, with minimum size for visibility
-    node.height = Math.max(nodeWidth, (node.count / maxCount) * maxHeight);
-  });
-}
+    // Draw category labels
+    textSize(16);
+    textStyle(BOLD);
+    textAlign(CENTER);
+    fill(0);
+  
+    let categoryXPositions = {
+        "Note-Taking": canvasWidth * 0.1,
+        "Study Hours": canvasWidth * 0.3,
+        "Reading Frequency": canvasWidth * 0.5,
+        "Class Attendance": canvasWidth * 0.7,
+        "CGPA": canvasWidth * 0.9
+    };
+  
+    Object.keys(categoryXPositions).forEach(category => {
+        text(category, categoryXPositions[category], 50); 
+    });
+  
+    // First pass: calculate node heights based on student count
+    calculateNodeHeights();
+    
+    // Second pass: position nodes vertically based on predefined category order
+    positionNodesVertically();
+    
+    // Third pass: calculate entry and exit positions for links
+    calculateLinkPositions();
+  
+    // Draw links
+    noStroke();
+  
+    // Sort links by count (descending) to draw thicker ones first
+    let sortedLinks = [...links].sort((a, b) => b.count - a.count);
+  
+    sortedLinks.forEach(link => {
+        // Link thickness is now based on the actual count value
+        let linkThickness = Math.max(2, link.count * 3); // Apply minimum thickness for visibility
+        
+        // Use the precalculated source and target positions
+        let sourceX = link.source.x + nodeWidth;
+        let sourceY = link.sourceY + sankeyVerticalOffset;
+        let targetX = link.target.x;
+        let targetY = link.targetY + sankeyVerticalOffset;
+  
+        // Calculate control points for curved links
+        let control1X = sourceX + (targetX - sourceX) * 0.4;
+        let control1Y = sourceY;
+        let control2X = sourceX + (targetX - sourceX) * 0.6;
+        let control2Y = targetY;
+  
+        // Get color based on source node category
+        let sourceCategory = link.source.category;
+        let sourceIndex = noteTakingCategories.indexOf(link.source.name);
+  
+        if (sourceCategory === "Study Hours") {
+            sourceIndex = studyHoursCategories.indexOf(link.source.name);
+        } else if (sourceCategory === "Reading Frequency") {
+            sourceIndex = readingFreqCategories.indexOf(link.source.name);
+        } else if (sourceCategory === "Class Attendance") {
+            sourceIndex = classAttendanceCategories.indexOf(link.source.name);
+        } else if (sourceCategory === "CGPA") {
+            sourceIndex = cgpaCategories.indexOf(link.source.name);
+        }
+  
+        let linkColor = colorScales[sourceCategory][sourceIndex] || "#cccccc";
+  
+        // Highlight the link if it's hovered
+        if (link === hoveredLink) {
+            fill(255, 255, 0, 200); // Highlighted color
+        } else if (selectedNode && (link.source === selectedNode || link.target === selectedNode)) {
+            fill(190, 147, 212, 150); // Lilac for selected node connections
+        } else {
+            fill(linkColor);
+        }
+  
+        // Draw bezier curve for link
+        beginShape();
+        vertex(sourceX, sourceY - linkThickness / 2);
+        bezierVertex(control1X, sourceY - linkThickness / 2, control2X, targetY - linkThickness / 2, targetX, targetY - linkThickness / 2);
+        vertex(targetX, targetY + linkThickness / 2);
+        bezierVertex(control2X, targetY + linkThickness / 2, control1X, sourceY + linkThickness / 2, sourceX, sourceY + linkThickness / 2);
+        endShape(CLOSE);
+    });
+  
+    // Draw nodes
+    if (nodes && Array.isArray(nodes)) {
+        nodes.forEach(node => {
+            if (node.count === 0) return; // Skip empty nodes
+        
+            let categoryIndex = 0;
+        
+            if (node.category === "Note-Taking") {
+                categoryIndex = noteTakingCategories.indexOf(node.name);
+            } else if (node.category === "Study Hours") {
+                categoryIndex = studyHoursCategories.indexOf(node.name);
+            } else if (node.category === "Reading Frequency") {
+                categoryIndex = readingFreqCategories.indexOf(node.name);
+            } else if (node.category === "Class Attendance") {
+                categoryIndex = classAttendanceCategories.indexOf(node.name);
+            } else if (node.category === "CGPA") {
+                categoryIndex = cgpaCategories.indexOf(node.name);
+            }
+        
+            // Highlight selected node
+            let nodeColor = colorScales[node.category][categoryIndex] || "#cccccc";
+            if (node === selectedNode) {
+                fill(190, 147, 212, 150);  //Change fill to periwinkle when selected
+                stroke('#BE93D4');
+                strokeWeight(3);
+            } else {
+                fill(nodeColor); // Use the node's color instead of white
+                noStroke();
+            }
 
-// New function to position nodes vertically
+        
+            // Draw the node with the calculated height
+            rect(node.x, node.y + sankeyVerticalOffset, nodeWidth, node.height);
+        
+            // Node label
+            noStroke();
+            // Set text color based on background color brightness for better readability
+            fill(0); // Use white text on light backgrounds, white on dark
+            textSize(14);
+            textAlign(CENTER, CENTER);
+        
+            // Show number of students
+            text(`${node.name}`, node.x + nodeWidth / 2, node.y + node.height / 2 - 7 + sankeyVerticalOffset);
+            text(`(${node.count})`, node.x + nodeWidth / 2, node.y + node.height / 2 + 7 + sankeyVerticalOffset);
+        });
+    }
+}
+  
+  // New function to calculate node heights based on counts
+  function calculateNodeHeights() {
+    const maxHeight = canvasHeight * 0.6; // Maximum height for nodes
+    
+    // Find max count to scale heights
+    let maxCount = 0;
+    if (nodes && Array.isArray(nodes)) {
+        nodes.forEach(node => {
+            if (node.count > maxCount) {
+                maxCount = node.count;
+            }
+        });
+    
+        // Calculate height for each node
+        nodes.forEach(node => {
+            // Scale height based on count, with minimum size for visibility
+            node.height = Math.max(nodeWidth, (node.count / maxCount) * maxHeight);
+        });
+    }
+  }
+  
+  // Updated function to position nodes vertically according to predefined order
 function positionNodesVertically() {
-  // Group nodes by category
-  const nodesByCategory = {};
-  
-  nodes.forEach(node => {
-    if (!nodesByCategory[node.category]) {
-      nodesByCategory[node.category] = [];
+    const categoryOrders = {
+        "Note-Taking": ["Never", "Sometimes", "Always"],
+        "Study Hours": ["<5 hours", "6-10 hours", "11-20 hours", "20+ hours"],
+        "Reading Frequency": ["None", "Sometimes", "Often"],
+        "Class Attendance": ["Sometimes", "Always"],
+        "CGPA": ["<2.00", "2.00-2.49", "2.50-2.99", "3.00-3.49", "3.50+"]
+    };
+
+    const availableHeight = canvasHeight * 0.7;
+    const spacing = 20;  //increased spacing
+
+    // Group nodes by category
+    const nodesByCategory = {};
+    if (nodes && Array.isArray(nodes)) {
+        nodes.forEach(node => {
+            if (!nodesByCategory[node.category]) {
+                nodesByCategory[node.category] = [];
+            }
+            nodesByCategory[node.category].push(node);
+        });
+
+        // Iterate through each category
+        Object.keys(nodesByCategory).forEach(category => {
+            const orderArray = categoryOrders[category];
+
+            if (!orderArray) {
+                console.error(`No ordering defined for category: ${category}`);
+                return;
+            }
+
+            const nodeMap = {};
+            nodesByCategory[category].forEach(node => {
+                nodeMap[node.name] = node;
+            });
+
+
+            const categoryNodeCount = nodesByCategory[category].length;
+
+            let totalNodeHeight = 0;
+
+            nodesByCategory[category].forEach(node => {
+                totalNodeHeight += node.height;
+            });
+
+            let totalSpacing = (categoryNodeCount - 1) * spacing;
+            let startY = (canvasHeight - totalNodeHeight - totalSpacing) / 2;
+            // Position nodes according to the order in categoryOrders
+            let yPos = startY;
+            orderArray.forEach(nodeName => {
+                const node = nodeMap[nodeName];
+
+                if (node) {
+                    node.y = yPos;
+
+                    yPos += node.height + spacing;
+                }
+            });
+        });
     }
-    nodesByCategory[node.category].push(node);
-  });
-  
-  // For each category, position nodes from top to bottom
-  Object.keys(nodesByCategory).forEach(category => {
-    // Sort nodes by count (optional, can be by name or other criteria)
-    nodesByCategory[category].sort((a, b) => b.count - a.count);
-    
-    // Calculate total height
-    let totalHeight = nodesByCategory[category].reduce((sum, node) => sum + node.height, 0);
-    
-    // Add spacing between nodes
-    const spacing = 10;
-    totalHeight += spacing * (nodesByCategory[category].length - 1);
-    
-    // Start at the middle of canvas minus half of total height
-    let currentY = (canvasHeight / 2) - (totalHeight / 2);
-    
-    // Position nodes
-    nodesByCategory[category].forEach(node => {
-      node.y = currentY;
-      currentY += node.height + spacing;
-    });
-  });
 }
-
-function calculateLinkPositions() {
-  // Assign unique IDs to nodes if they don't have them
-  nodes.forEach((node, index) => {
-    if (!node.id) {
-      node.id = `${node.category}-${node.name}`;
+  
+  function calculateLinkPositions() {
+    // Assign unique IDs to nodes if they don't have them
+    if (nodes && Array.isArray(nodes)) {
+        nodes.forEach((node, index) => {
+            if (!node.id) {
+                node.id = `${node.category}-${node.name}`;
+            }
+        });
     }
-  });
-  
-  // Group links by source node and target node
-  let linksBySource = {};
-  let linksByTarget = {};
-  
-  nodes.forEach(node => {
-    linksBySource[node.id] = [];
-    linksByTarget[node.id] = [];
-  });
-  
-  links.forEach(link => {
-    linksBySource[link.source.id].push(link);
-    linksByTarget[link.target.id].push(link);
-  });
-  
-  // Calculate source positions
-  nodes.forEach(sourceNode => {
-    const sourceLinks = linksBySource[sourceNode.id];
-    if (!sourceLinks || sourceLinks.length === 0) return;
     
-    // Calculate total value flowing out of this node
-    const totalValue = sourceLinks.reduce((sum, link) => sum + link.count, 0);
+    // Group links by source node and target node
+    let linksBySource = {};
+    let linksByTarget = {};
     
-    // Assign positions proportionally within the node's height
-    let currentY = sourceNode.y;
+    if (nodes && Array.isArray(nodes)) {
+        nodes.forEach(node => {
+            linksBySource[node.id] = [];
+            linksByTarget[node.id] = [];
+        });
+    }
     
-    sourceLinks.forEach(link => {
-      const ratio = link.count / totalValue;
-      const linkHeight = sourceNode.height * ratio;
-      
-      // Position at the center of this link's section
-      link.sourceY = currentY + linkHeight / 2;
-      
-      // Move down for next link
-      currentY += linkHeight;
-    });
-  });
-  
-  // Calculate target positions
-  nodes.forEach(targetNode => {
-    const targetLinks = linksByTarget[targetNode.id];
-    if (!targetLinks || targetLinks.length === 0) return;
+    if (links && Array.isArray(links)) {
+        links.forEach(link => {
+            linksBySource[link.source.id].push(link);
+            linksByTarget[link.target.id].push(link);
+        });
+    }
     
-    // Calculate total value flowing into this node
-    const totalValue = targetLinks.reduce((sum, link) => sum + link.count, 0);
+    // Calculate source positions
+    if (nodes && Array.isArray(nodes)) {
+        nodes.forEach(sourceNode => {
+            const sourceLinks = linksBySource[sourceNode.id];
+            if (!sourceLinks || sourceLinks.length === 0) return;
+        
+            // Calculate total value flowing out of this node
+            const totalValue = sourceLinks.reduce((sum, link) => sum + link.count, 0);
+        
+            // Assign positions proportionally within the node's height
+            let currentY = sourceNode.y;
+        
+            sourceLinks.forEach(link => {
+                const ratio = link.count / totalValue;
+                const linkHeight = sourceNode.height * ratio;
+            
+                // Position at the center of this link's section
+                link.sourceY = currentY + linkHeight / 2;
+            
+                // Move down for next link
+                currentY += linkHeight;
+            });
+        });
+    }
     
-    // Assign positions proportionally within the node's height
-    let currentY = targetNode.y;
-    
-    targetLinks.forEach(link => {
-      const ratio = link.count / totalValue;
-      const linkHeight = targetNode.height * ratio;
-      
-      // Position at the center of this link's section
-      link.targetY = currentY + linkHeight / 2;
-      
-      // Move down for next link
-      currentY += linkHeight;
-    });
-  });
-}
-
-// Update mouseMoved function to use the new link positions
-function mouseMoved() {
-  // Check if mouse is inside the canvas
-  if (mouseX < 0 || mouseY < 0 || mouseX > canvasWidth || mouseY > canvasHeight) {
-      hoveredLink = null;
-      hideHoverInfo();
-      return;
+    // Calculate target positions
+    if (nodes && Array.isArray(nodes)) {
+        nodes.forEach(targetNode => {
+            const targetLinks = linksByTarget[targetNode.id];
+            if (!targetLinks || targetLinks.length === 0) return;
+        
+            // Calculate total value flowing into this node
+            const totalValue = targetLinks.reduce((sum, link) => sum + link.count, 0);
+        
+            // Assign positions proportionally within the node's height
+            let currentY = targetNode.y;
+        
+            targetLinks.forEach(link => {
+                const ratio = link.count / totalValue;
+                const linkHeight = targetNode.height * ratio;
+            
+                // Position at the center of this link's section
+                link.targetY = currentY + linkHeight / 2;
+            
+                // Move down for next link
+                currentY += linkHeight;
+            });
+        });
+    }
   }
-
-  const mx = mouseX - canvasOffsetX;
-  const my = mouseY - canvasOffsetY;
-
-  // Check for hovering over links
-  hoveredLink = null;
-  if (links && Array.isArray(links)) {
-      for (let link of links) {
-          // Get source and target positions
-          let sourceX = link.source.x + nodeWidth;
-          let sourceY = link.sourceY + sankeyVerticalOffset;
-          let targetX = link.target.x;
-          let targetY = link.targetY + sankeyVerticalOffset;
-
-          // Calculate control points
-          let control1X = sourceX + (targetX - sourceX) * 0.4;
-          let control1Y = sourceY;
-          let control2X = sourceX + (targetX - sourceX) * 0.6;
-          let control2Y = targetY;
-
-          // Simplified hit detection for bezier curves
-          // Check if mouse is roughly along the path
-          let t = 0.5; // Parameter along bezier curve
-          let pointOnCurveX = bezierPoint(sourceX, control1X, control2X, targetX, t);
-          let pointOnCurveY = bezierPoint(sourceY, control1Y, control2Y, targetY, t);
-
-          // Distance from mouse to curve point
-          let distance = dist(mx, my, pointOnCurveX, pointOnCurveY);
-
-          // Adjust hit area based on link thickness
-          let linkThickness = Math.max(10, link.count * 2);
-
-          if (distance < linkThickness) {
-              hoveredLink = link;
-              break;
-          }
-      }
+  
+  // Update mouseMoved function to use the new link positions
+  function mouseMoved() {
+    // Check if mouse is inside the canvas
+    if (mouseX < 0 || mouseY < 0 || mouseX > canvasWidth || mouseY > canvasHeight) {
+        hoveredLink = null;
+        hideHoverInfo();
+        return;
+    }
+  
+    const mx = mouseX - canvasOffsetX;
+    const my = mouseY - canvasOffsetY;
+  
+    // Check for hovering over links
+    hoveredLink = null;
+    if (links && Array.isArray(links)) {
+        for (let link of links) {
+            // Get source and target positions
+            let sourceX = link.source.x + nodeWidth;
+            let sourceY = link.sourceY + sankeyVerticalOffset;
+            let targetX = link.target.x;
+            let targetY = link.targetY + sankeyVerticalOffset;
+  
+            // Calculate control points
+            let control1X = sourceX + (targetX - sourceX) * 0.4;
+            let control1Y = sourceY;
+            let control2X = sourceX + (targetX - sourceX) * 0.6;
+            let control2Y = targetY;
+  
+            // Simplified hit detection for bezier curves
+            // Check if mouse is roughly along the path
+            let t = 0.5; // Parameter along bezier curve
+            let pointOnCurveX = bezierPoint(sourceX, control1X, control2X, targetX, t);
+            let pointOnCurveY = bezierPoint(sourceY, control1Y, control2Y, targetY, t);
+  
+            // Distance from mouse to curve point
+            let distance = dist(mx, my, pointOnCurveX, pointOnCurveY);
+  
+            // Adjust hit area based on link thickness
+            let linkThickness = Math.max(10, link.count * 2);
+  
+            if (distance < linkThickness) {
+                hoveredLink = link;
+                break;
+            }
+        }
+    }
+  
+    // Check for hovering over nodes
+    selectedNode = null;
+    if (nodes && Array.isArray(nodes)) {
+        for (let node of nodes) {
+            if (mx >= node.x && mx <= node.x + nodeWidth &&
+                my >= node.y + sankeyVerticalOffset && my <= node.y + node.height + sankeyVerticalOffset) {
+                selectedNode = node;
+                break;
+            }
+        }
+    }
+  
+    if (hoveredLink) {
+        drawHoverInfo(hoveredLink);
+    } else {
+        hideHoverInfo();
+    }
   }
-
-  // Check for hovering over nodes
-  selectedNode = null;
-  for (let node of nodes) {
-      if (mx >= node.x && mx <= node.x + nodeWidth &&
-          my >= node.y + sankeyVerticalOffset && my <= node.y + node.height + sankeyVerticalOffset) {
-          selectedNode = node;
-          break;
-      }
-  }
-
-  if (hoveredLink) {
-      drawHoverInfo(hoveredLink);
-  } else {
-      hideHoverInfo();
-  }
-}
 
 function mouseClicked() {
   const mx = mouseX - canvasOffsetX;

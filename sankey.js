@@ -434,7 +434,6 @@ function updateLinkInfo() {
 }
 
 const sankeyVerticalOffset = 0;
-
 function drawSankeyDiagram() {
     if (!nodes || nodes.length === 0 || !links || links.length === 0) {
         textSize(20);
@@ -579,28 +578,28 @@ function drawSankeyDiagram() {
     }
 }
   
-  // New function to calculate node heights based on counts
-  function calculateNodeHeights() {
-    const maxHeight = canvasHeight * 0.55; // Maximum height for nodes
-    
-    // Find max count to scale heights
-    let maxCount = 0;
-    if (nodes && Array.isArray(nodes)) {
-        nodes.forEach(node => {
-            if (node.count > maxCount) {
-                maxCount = node.count;
-            }
-        });
-    
-        // Calculate height for each node
-        nodes.forEach(node => {
-            // Scale height based on count, with minimum size for visibility
-            node.height = Math.max(nodeWidth, (node.count / maxCount) * maxHeight);
-        });
-    }
-  }
+// New function to calculate node heights based on counts
+function calculateNodeHeights() {
+const maxHeight = canvasHeight * 0.55; // Maximum height for nodes
+
+// Find max count to scale heights
+let maxCount = 0;
+if (nodes && Array.isArray(nodes)) {
+    nodes.forEach(node => {
+        if (node.count > maxCount) {
+            maxCount = node.count;
+        }
+    });
+
+    // Calculate height for each node
+    nodes.forEach(node => {
+        // Scale height based on count, with minimum size for visibility
+        node.height = Math.max(nodeWidth, (node.count / maxCount) * maxHeight);
+    });
+}
+}
   
-  // Updated function to position nodes vertically according to predefined order
+// Updated function to position nodes vertically according to predefined order
 function positionNodesVertically() {
     const categoryOrders = {
         "Note-Taking": ["Never", "Sometimes", "Always"],
@@ -663,158 +662,158 @@ function positionNodesVertically() {
     }
 }
   
-  function calculateLinkPositions() {
-    // Assign unique IDs to nodes if they don't have them
-    if (nodes && Array.isArray(nodes)) {
-        nodes.forEach((node, index) => {
-            if (!node.id) {
-                node.id = `${node.category}-${node.name}`;
-            }
-        });
-    }
+function calculateLinkPositions() {
+// Assign unique IDs to nodes if they don't have them
+if (nodes && Array.isArray(nodes)) {
+    nodes.forEach((node, index) => {
+        if (!node.id) {
+            node.id = `${node.category}-${node.name}`;
+        }
+    });
+}
+
+// Group links by source node and target node
+let linksBySource = {};
+let linksByTarget = {};
+
+if (nodes && Array.isArray(nodes)) {
+    nodes.forEach(node => {
+        linksBySource[node.id] = [];
+        linksByTarget[node.id] = [];
+    });
+}
+
+if (links && Array.isArray(links)) {
+    links.forEach(link => {
+        linksBySource[link.source.id].push(link);
+        linksByTarget[link.target.id].push(link);
+    });
+}
+
+// Calculate source positions
+if (nodes && Array.isArray(nodes)) {
+    nodes.forEach(sourceNode => {
+        const sourceLinks = linksBySource[sourceNode.id];
+        if (!sourceLinks || sourceLinks.length === 0) return;
     
-    // Group links by source node and target node
-    let linksBySource = {};
-    let linksByTarget = {};
+        // Calculate total value flowing out of this node
+        const totalValue = sourceLinks.reduce((sum, link) => sum + link.count, 0);
     
-    if (nodes && Array.isArray(nodes)) {
-        nodes.forEach(node => {
-            linksBySource[node.id] = [];
-            linksByTarget[node.id] = [];
-        });
-    }
+        // Assign positions proportionally within the node's height
+        let currentY = sourceNode.y;
     
-    if (links && Array.isArray(links)) {
-        links.forEach(link => {
-            linksBySource[link.source.id].push(link);
-            linksByTarget[link.target.id].push(link);
+        sourceLinks.forEach(link => {
+            const ratio = link.count / totalValue;
+            const linkHeight = sourceNode.height * ratio;
+        
+            // Position at the center of this link's section
+            link.sourceY = currentY + linkHeight / 2;
+        
+            // Move down for next link
+            currentY += linkHeight*0.9;
         });
-    }
+    });
+}
+
+// Calculate target positions
+if (nodes && Array.isArray(nodes)) {
+    nodes.forEach(targetNode => {
+        const targetLinks = linksByTarget[targetNode.id];
+        if (!targetLinks || targetLinks.length === 0) return;
     
-    // Calculate source positions
-    if (nodes && Array.isArray(nodes)) {
-        nodes.forEach(sourceNode => {
-            const sourceLinks = linksBySource[sourceNode.id];
-            if (!sourceLinks || sourceLinks.length === 0) return;
-        
-            // Calculate total value flowing out of this node
-            const totalValue = sourceLinks.reduce((sum, link) => sum + link.count, 0);
-        
-            // Assign positions proportionally within the node's height
-            let currentY = sourceNode.y;
-        
-            sourceLinks.forEach(link => {
-                const ratio = link.count / totalValue;
-                const linkHeight = sourceNode.height * ratio;
-            
-                // Position at the center of this link's section
-                link.sourceY = currentY + linkHeight / 2;
-            
-                // Move down for next link
-                currentY += linkHeight*0.9;
-            });
-        });
-    }
+        // Calculate total value flowing into this node
+        const totalValue = targetLinks.reduce((sum, link) => sum + link.count, 0);
     
-    // Calculate target positions
-    if (nodes && Array.isArray(nodes)) {
-        nodes.forEach(targetNode => {
-            const targetLinks = linksByTarget[targetNode.id];
-            if (!targetLinks || targetLinks.length === 0) return;
+        // Assign positions proportionally within the node's height
+        let currentY = targetNode.y;
+    
+        targetLinks.forEach(link => {
+            const ratio = link.count / totalValue;
+            const linkHeight = targetNode.height * ratio;
         
-            // Calculate total value flowing into this node
-            const totalValue = targetLinks.reduce((sum, link) => sum + link.count, 0);
+            // Position at the center of this link's section
+            link.targetY = currentY + linkHeight / 2;
         
-            // Assign positions proportionally within the node's height
-            let currentY = targetNode.y;
-        
-            targetLinks.forEach(link => {
-                const ratio = link.count / totalValue;
-                const linkHeight = targetNode.height * ratio;
-            
-                // Position at the center of this link's section
-                link.targetY = currentY + linkHeight / 2;
-            
-                // Move down for next link
-                currentY += linkHeight*0.9;
-            });
+            // Move down for next link
+            currentY += linkHeight*0.9;
         });
-    }
-  }
-  
-  // Update mouseMoved function to use the new link positions
-  function mouseMoved() {
-    // Check if mouse is inside the canvas
-    if (mouseX < 0 || mouseY < 0 || mouseX > canvasWidth || mouseY > canvasHeight) {
-        hoveredLink = null;
-        hideHoverInfo();
-        return;
-    }
-  
-    const mx = mouseX - canvasOffsetX;
-    const my = mouseY - canvasOffsetY;
-  
-    // Check for hovering over links
+    });
+}
+}
+
+// Update mouseMoved function to use the new link positions
+function mouseMoved() {
+// Check if mouse is inside the canvas
+if (mouseX < 0 || mouseY < 0 || mouseX > canvasWidth || mouseY > canvasHeight) {
     hoveredLink = null;
-    if (links && Array.isArray(links)) {
-        for (let link of links) {
-            // Get source and target positions
-            let sourceX = link.source.x + nodeWidth;
-            let sourceY = link.sourceY + sankeyVerticalOffset;
-            let targetX = link.target.x;
-            let targetY = link.targetY + sankeyVerticalOffset;
-  
-            // Calculate control points
-            let control1X = sourceX + (targetX - sourceX) * 0.4;
-            let control1Y = sourceY;
-            let control2X = sourceX + (targetX - sourceX) * 0.6;
-            let control2Y = targetY;
+    hideHoverInfo();
+    return;
+}
 
-            // Check if mouse is roughly along the path
-            let linkThickness = Math.max(10, link.count * 2);
-            let isHovering = false;
-            const numSamples = 10; // Increase for better accuracy
+const mx = mouseX - canvasOffsetX;
+const my = mouseY - canvasOffsetY;
 
-            for (let i = 0; i <= numSamples; i++) {
-                let t = i / numSamples;
-                let pointOnCurveX = bezierPoint(sourceX, control1X, control2X, targetX, t);
-                let pointOnCurveY = bezierPoint(sourceY, control1Y, control2Y, targetY, t);
+// Check for hovering over links
+hoveredLink = null;
+if (links && Array.isArray(links)) {
+    for (let link of links) {
+        // Get source and target positions
+        let sourceX = link.source.x + nodeWidth;
+        let sourceY = link.sourceY + sankeyVerticalOffset;
+        let targetX = link.target.x;
+        let targetY = link.targetY + sankeyVerticalOffset;
 
-                let distance = dist(mx, my, pointOnCurveX, pointOnCurveY);
+        // Calculate control points
+        let control1X = sourceX + (targetX - sourceX) * 0.4;
+        let control1Y = sourceY;
+        let control2X = sourceX + (targetX - sourceX) * 0.6;
+        let control2Y = targetY;
 
-                if (distance < linkThickness / 2) { // Divide by 2 because we are checking distance from center
-                    isHovering = true;
-                    break;
-                }
-            }
+        // Check if mouse is roughly along the path
+        let linkThickness = Math.max(10, link.count * 2);
+        let isHovering = false;
+        const numSamples = 10; // Increase for better accuracy
 
-            if (isHovering) {
-                hoveredLink = link;
+        for (let i = 0; i <= numSamples; i++) {
+            let t = i / numSamples;
+            let pointOnCurveX = bezierPoint(sourceX, control1X, control2X, targetX, t);
+            let pointOnCurveY = bezierPoint(sourceY, control1Y, control2Y, targetY, t);
+
+            let distance = dist(mx, my, pointOnCurveX, pointOnCurveY);
+
+            if (distance < linkThickness / 2) { // Divide by 2 because we are checking distance from center
+                isHovering = true;
                 break;
             }
         }
-    }
-  
-    // Check for hovering over nodes
-    selectedNode = null;
-    if (nodes && Array.isArray(nodes)) {
-        for (let node of nodes) {
-            if (mx >= node.x && mx <= node.x + nodeWidth &&
-                my >= node.y + sankeyVerticalOffset && my <= node.y + node.height + sankeyVerticalOffset) {
-                selectedNode = node;
-                break;
-            }
+
+        if (isHovering) {
+            hoveredLink = link;
+            break;
         }
     }
-  
-    if (hoveredLink) {
-        drawHoverInfo(hoveredLink);
-    } else if (selectedNode){
-        drawNodeHoverInfo(selectedNode);
-    } else {
-        hideHoverInfo();
+}
+
+// Check for hovering over nodes
+selectedNode = null;
+if (nodes && Array.isArray(nodes)) {
+    for (let node of nodes) {
+        if (mx >= node.x && mx <= node.x + nodeWidth &&
+            my >= node.y + sankeyVerticalOffset && my <= node.y + node.height + sankeyVerticalOffset) {
+            selectedNode = node;
+            break;
+        }
     }
-  }
+}
+
+if (hoveredLink) {
+    drawHoverInfo(hoveredLink);
+} else if (selectedNode){
+    drawNodeHoverInfo(selectedNode);
+} else {
+    hideHoverInfo();
+}
+}
 
   function drawNodeHoverInfo(node) {
     if (node) {

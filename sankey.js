@@ -793,10 +793,28 @@ function positionNodesVertically() {
   
     if (hoveredLink) {
         drawHoverInfo(hoveredLink);
+    } else if (selectedNode){
+        drawNodeHoverInfo(selectedNode);
     } else {
         hideHoverInfo();
     }
   }
+
+  function drawNodeHoverInfo(node) {
+    if (node) {
+        let percentage = (node.count / filteredData.length * 100).toFixed(1);
+        let content = `
+            <strong>Category:</strong> ${node.category}<br>
+            <strong>Node:</strong> ${node.name}<br>
+            <strong>Students:</strong> ${node.count} (${percentage}% of filtered data)
+        `;
+
+        hoverInfo.style.left = mouseX + 10 + 'px';
+        hoverInfo.style.top = mouseY + 40 + 'px';
+        hoverInfo.innerHTML = content;
+        hoverInfo.style.display = 'block';
+    }
+}
 
 function mouseClicked() {
   const mx = mouseX - canvasOffsetX;

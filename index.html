@@ -1,139 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Write On Track!</title>
+    <title>Beyond Note-Taking: What Really Drives Academic Success?</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
- 
     <div class="container">
-        <header class="header">
-            <img src="https://em-content.zobj.net/source/apple/391/graduation-cap_1f393.png" alt="Graduation Cap" class="grad-cap">
-            <h1>Write On Track!</h1>
-            <div class="banner">
-                <p class="subtitle">Mapping the Impact of Note-Taking on Academic Success</p>
+        <header>
+            <div class="index1-header">
+                <img src="https://em-content.zobj.net/source/apple/391/graduation-cap_1f393.png" alt="Graduation Cap" class="grad-cap">
+                <h1>Write On Track!</h1>
+                <div class="banner">
+                    <p class="subtitle index1-subtitle">Beyond Note-Taking: What Really Drives Academic Success?</p>
+                </div>
+                <br>
+                <p class="subtitle index1-subtitle">Exploring the relative impact of <span class="highlight">study habits</span> on student <span class="highlight">academic performance.</span> Does diligent note-taking guarantee academic success? Our analysis tracks multiple study habits across student populations to reveal which factors most strongly correlate with higher GPAs.</p>
             </div>
-            <br>
-            <p class="subtitle">Our visualization explores the impact of <span class="highlight">note-taking frequency</span> on students' <span class="highlight">academic performance,</span> considering multiple factors such as gender, scholarship status, additional work, artistic/sports activities, weekly study hours, reading habits, and class attendance.</p>
         </header>
+        
 
-        <section class="audience-section">
-            <h2 style="font-size: 3rem; color: #282D46; margin-bottom: 2rem;">Designed for</h2>
-            <div class="audience-grid">
-                <div class="audience-card">
-                    <h3>Students</h3>
-                    <p>To gain insights into how study habits (like note-taking) influence their performance.</p>
+        <div class="visualization-container">
+            <!-- Filter Panel -->
+            <div id="filter-panel" class="panel">
+                <h2>Filters</h2>
+                <p class="instruction">Select filters to explore different student groups</p>
+
+                <div class="filter-section">
+                    <h3>Age</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" name="age-filter" value="18-21" onchange="applyFilters()"> 18-21</label>
+                        <label><input type="checkbox" name="age-filter" value="22-25" onchange="applyFilters()"> 22-25</label>
+                        <label><input type="checkbox" name="age-filter" value="26+" onchange="applyFilters()"> 26+</label>
+                    </div>
                 </div>
-                <div class="audience-card">
-                    <h3>EdTech Designers</h3>
-                    <p>To develop tools that encourage effective learning behaviors.</p>
+
+                <div class="filter-section">
+                    <h3>Gender</h3>
+                    <div class="filter-options">
+                        <label><input type="radio" name="gender-filter" value="female" onchange="applyFilters()"> Female</label>
+                        <label><input type="radio" name="gender-filter" value="male" onchange="applyFilters()"> Male</label>
+                        <label><input type="radio" name="gender-filter" value="" onchange="applyFilters()" checked> All</label>
+                    </div>
                 </div>
-                <div class="audience-card">
-                    <h3>University Administrators & Policymakers</h3>
-                    <p>To inform decisions on academic support programs and student interventions.</p>
+
+                <div class="filter-section">
+                    <h3>Scholarship</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" id="scholarship-filter-25" value="25" onchange="applyFilters()"> 25%</label>
+                        <label><input type="checkbox" id="scholarship-filter-50" value="50" onchange="applyFilters()"> 50%</label>
+                        <label><input type="checkbox" id="scholarship-filter-75" value="75" onchange="applyFilters()"> 75%</label>
+                        <label><input type="checkbox" id="scholarship-filter-100" value="100" onchange="applyFilters()"> Full (100%)</label>
+                    </div>
                 </div>
-                <div class="audience-card">
-                    <h3>Educators & Academic Researchers</h3>
-                    <p>To understand patterns in student behavior and learning strategies.</p>
+
+                <!-- <div class="filter-section">
+                    <h3>Artistic/Sports Activity</h3>
+                    <div class="filter-options">
+                        <label><input type="radio" name="artistic-sports-filter" value="Yes" onchange="applyFilters()"> Yes</label>
+                        <label><input type="radio" name="artistic-sports-filter" value="No" onchange="applyFilters()"> No</label>
+                        <label><input type="radio" name="artistic-sports-filter" value="" onchange="applyFilters()" checked> All</label>
+                    </div>
+                </div> -->
+
+                <div class="filter-section">
+                    <h3>Weekly Study Hours</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" id="study-hours-filter-1" value="<5 hours" onchange="applyFilters()"> Less than 5 hours</label>
+                        <label><input type="checkbox" id="study-hours-filter-2" value="6-10 hours" onchange="applyFilters()"> 6-10 hours</label>
+                        <label><input type="checkbox" id="study-hours-filter-3" value="11-20 hours" onchange="applyFilters()"> 11-20 hours</label>
+                        <label><input type="checkbox" id="study-hours-filter-4" value="20+ hours" onchange="applyFilters()"> 20+ hours</label>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>Reading Frequency</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" id="reading-freq-non-sci-filter-1" value="None" onchange="applyFilters()"> None</label>
+                        <label><input type="checkbox" id="reading-freq-non-sci-filter-2" value="Sometimes" onchange="applyFilters()"> Sometimes</label>
+                        <label><input type="checkbox" id="reading-freq-non-sci-filter-3" value="Often" onchange="applyFilters()"> Often</label>
+                    </div>
+                </div>
+
+                <!-- <div class="filter-section">
+                    <h3>Reading Frequency (Scientific)</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" id="reading-freq-sci-filter-1" value="None" onchange="applyFilters()"> None</label>
+                        <label><input type="checkbox" id="reading-freq-sci-filter-2" value="Sometimes" onchange="applyFilters()"> Sometimes</label>
+                        <label><input type="checkbox" id="reading-freq-sci-filter-3" value="Often" onchange="applyFilters()"> Often</label>
+                    </div>
+                </div> -->
+
+                <div class="filter-section">
+                    <h3>Class Attendance</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" id="class-attendance-filter-2" value="Sometimes" onchange="applyFilters()"> Sometimes</label>
+                        <label><input type="checkbox" id="class-attendance-filter-3" value="Always" onchange="applyFilters()"> Always</label>
+                    </div>
                 </div>
             </div>
-        </section>
-        <br><br>
 
-        <h2 style="font-size: 3rem; color: #282D46; margin-bottom: 2rem;">Why should you care?</h2>
-
-        <section class="why-section">
-            <ul>
-                <p style="color: #282D46; margin-bottom: 2rem;">Note-taking is a fundamental learning strategy, but how often does it actually contribute to better academic performance? Our visualization helps answer that question by:</p>
-                <li>Identifying trends and patterns in student success.</li>
-                <li>Highlighting disparities based on demographics and other variables.</li>
-                <li>Encouraging data-driven decisions to improve learning outcomes.</li>
-                <li>Providing actionable insights for students to optimize their study habits.</li>
-            </ul>
-            <span class="emoji-decoration" style="right: 2rem;">📚</span>            
-        </section>
-
-       <section id="visualization-section">
-        <div id="visualization-container">
-
-            <br><br><br><br> 
-
-           <div id="filter-panel">
-              <div class="filter-group">
-                 <label>Age Group:</label>
-                 <input type="checkbox" id="age-filter-18-21" value="18-21"><label for="age-filter-18-21">18-21</label>
-                 <input type="checkbox" id="age-filter-22-25" value="22-25"><label for="age-filter-22-25">22-25</label>
-                 <input type="checkbox" id="age-filter-26+" value="26+"><label for="age-filter-26+">26+</label>
-              </div>
-              <div class="filter-group">
-                 <label>Gender:</label>
-                 <input type="checkbox" id="gender-filter-male" value="male"><label for="gender-filter-male">Male</label>
-                 <input type="checkbox" id="gender-filter-female" value="female"><label for="gender-filter-female">Female</label>
-              </div>
-             <div class="filter-group">
-                 <label>Scholarship %:</label>
-                  <input type="checkbox" id="scholarship-filter-25" value="25"><label for="scholarship-filter-25">25%</label>
-                  <input type="checkbox" id="scholarship-filter-50" value="50"><label for="scholarship-filter-50">50%</label>
-                  <input type="checkbox" id="scholarship-filter-75" value="75"><label for="scholarship-filter-75">75%</label>
-                  <input type="checkbox" id="scholarship-filter-100" value="100"><label for="scholarship-filter-100">100%</label>
-             </div>
-              <!-- <div class="filter-group">
-                  <label>Additional Work:</label>
-                  <input type="checkbox" id="additional-work-filter-yes" value="Yes"><label for="additional-work-filter-yes">Yes</label>
-                  <input type="checkbox" id="additional-work-filter-no" value="No"><label for="additional-work-filter-no">No</label>
-              </div>
-              <div class="filter-group">
-                 <label>Artistic/Sports:</label>
-                  <input type="checkbox" id="artistic-sports-filter-yes" value="Yes"><label for="artistic-sports-filter-yes">Yes</label>
-                 <input type="checkbox" id="artistic-sports-filter-no" value="No"><label for="artistic-sports-filter-no">No</label>
-              </div> -->
-              <div class="filter-group">
-                 <label>Weekly Study Hours:</label>
-                 <input type="checkbox" id="study-hours-filter-5" value="5"><label for="study-hours-filter-5"><5 hours</label>
-                 <input type="checkbox" id="study-hours-filter-10" value="10"><label for="study-hours-filter-10">6-10 hours</label>
-                 <input type="checkbox" id="study-hours-filter-20" value="20"><label for="study-hours-filter-20">11-20 hours</label>
-                 <input type="checkbox" id="study-hours-filter-20plus" value="20+"><label for="study-hours-filter-20plus">20+ hours</label>
-             </div>
-              <div class="filter-group">
-                 <label>Reading (Non-Sci):</label>
-                 <input type="checkbox" id="reading-freq-non-sci-filter-none" value="None"><label for="reading-freq-non-sci-filter-none">None</label>
-                 <input type="checkbox" id="reading-freq-non-sci-filter-sometimes" value="Sometimes"><label for="reading-freq-non-sci-filter-sometimes">Sometimes</label>
-                 <input type="checkbox" id="reading-freq-non-sci-filter-often" value="Often"><label for="reading-freq-non-sci-filter-often">Often</label>
-             </div>
-              <div class="filter-group">
-                 <label>Reading (Sci):</label>
-                  <input type="checkbox" id="reading-freq-sci-filter-none" value="None"><label for="reading-freq-sci-filter-none">None</label>
-                  <input type="checkbox" id="reading-freq-sci-filter-sometimes" value="Sometimes"><label for="reading-freq-sci-filter-sometimes">Sometimes</label>
-                  <input type="checkbox" id="reading-freq-sci-filter-often" value="Often"><label for="reading-freq-sci-filter-often">Often</label>
-             </div>
-            <div class="filter-group">
-               <label>Class Attendance:</label>
-                 <input type="checkbox" id="class-attendance-filter-always" value="Always"><label for="class-attendance-filter-always">Always</label>
-                 <input type="checkbox" id="class-attendance-filter-sometimes" value="Sometimes"><label for="class-attendance-filter-sometimes">Sometimes</label>
-                 <input type="checkbox" id="class-attendance-filter-never" value="Never"><label for="class-attendance-filter-never">Never</label>
-              </div>
-           </div>
-
-           <br><br><br><br>  
-
-           <div id="link-info"></div>
-
-           <br>
-           <h3>Note-taking frequency &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;CGPA</h3>
-           <div id="sankey-container">
+            <!-- Sankey Diagram -->
+            <div id="sankey-container" class="panel">
                 <div id="hover-info"></div>
-           </div> 
-         </div>
-   </section>
-  
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgb(150, 150, 250);"></div>
+                <span>Link Strength (width = # of students)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgb(200, 200, 200);"></div>
+                <span>Node (click to focus)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgb(150, 150, 250);"></div>
+                <span>Selected Path</span>
+            </div>
+        </div>
+
+        <!-- Key Insights and Study Summary Panels -->
+        <div class="top-panels">
+            <div id="insight-panel" class="panel">
+                <h2>Key Insights</h2>
+                <p class="instruction">Insights update based on your filter selections</p>
+            </div>
+            <div id="link-info" class="panel">
+                <h2>Study Habit Patterns</h2>
+                <p class="instruction">Click on nodes to see detailed connections</p>
+            </div>
+        </div>
+
+        <!-- Begin content from index1.html -->
+        <div class="index1-content-container">
+            <section class="audience-section">
+                <h2 style="font-size: 3rem; color: #282D46; margin-bottom: 2rem;">Designed for</h2>
+                <div class="audience-grid">
+                    <div class="audience-card">
+                        <h3>Students</h3>
+                        <p>To gain insights into how study habits (like note-taking) influence their performance.</p>
+                    </div>
+                    <div class="audience-card">
+                        <h3>EdTech Designers</h3>
+                        <p>To develop tools that encourage effective learning behaviors.</p>
+                    </div>
+                    <div class="audience-card">
+                        <h3>University Administrators & Policymakers</h3>
+                        <p>To inform decisions on academic support programs and student interventions.</p>
+                    </div>
+                    <div class="audience-card">
+                        <h3>Educators & Academic Researchers</h3>
+                        <p>To understand patterns in student behavior and learning strategies.</p>
+                    </div>
+                </div>
+            </section>
+            <br><br>
+
+            <h2 style="font-size: 3rem; color: #282D46; margin-bottom: 2rem;">Why should you care?</h2>
+
+            <section class="why-section">
+                <ul>
+                    <p style="color: #282D46; margin-bottom: 2rem;">Note-taking is a fundamental learning strategy, but how often does it actually contribute to better academic performance? Our visualization helps answer that question by:</p>
+                    <li>Identifying trends and patterns in student success.</li>
+                    <li>Highlighting disparities based on demographics and other variables.</li>
+                    <li>Encouraging data-driven decisions to improve learning outcomes.</li>
+                    <li>Providing actionable insights for students to optimize their study habits.</li>
+                </ul>
+                <span class="emoji-decoration" style="right: 2rem;">📚</span>            
+            </section>
+        </div>
+        <!-- End content from index1.html -->
     </div>
 
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
-   <script src="sankey.js"></script>
+    <script>
+        // JavaScript to handle filter changes
+
+        function getSelectedFilters() {
+            const filterPanel = document.getElementById('filter-panel');
+            let selected = {
+                age: Array.from(filterPanel.querySelectorAll('input[name="age-filter"]:checked')).map(cb => cb.value),
+                gender: filterPanel.querySelector('input[name="gender-filter"]:checked')?.value || null,
+                scholarship: Array.from(filterPanel.querySelectorAll('input[id^="scholarship-filter-"]:checked')).map(cb => parseInt(cb.value)),
+                artisticSports: filterPanel.querySelector('input[name="artistic-sports-filter"]:checked')?.value || null,
+                studyHours: Array.from(filterPanel.querySelectorAll('input[id^="study-hours-filter-"]:checked')).map(cb => cb.value),
+                readingFreqNonSci: Array.from(filterPanel.querySelectorAll('input[id^="reading-freq-non-sci-filter-"]:checked')).map(cb => cb.value),
+                readingFreqSci: Array.from(filterPanel.querySelectorAll('input[id^="reading-freq-sci-filter-"]:checked')).map(cb => cb.value),
+                classAttendance: Array.from(filterPanel.querySelectorAll('input[id^="class-attendance-filter-"]:checked')).map(cb => cb.value)
+            };
+
+             if (selected.gender === ""){
+                selected.gender = null; // so if no filter selected, set to null so all can appear
+             }
+
+            if (!selected.age){
+                selected.age = []; // so if no filter selected, set to [] so all can appear
+            }
+
+
+            return selected;
+        }
+
+        function applyFilters() {
+            const selectedFilters = getSelectedFilters();
+            window.filterData(selectedFilters); // Call window.filterData (sankey.js)
+        }        
+
+    </script>
+
+    <script src="sankey.js"></script>
+
+    <script>
+        window.filterData = filterData;
+        window.updateInsightPanel = updateInsightPanel;
+        // Initialize Insight Panel on page load
+        window.updateInsightPanel();
+    </script>
+
 </body>
+
 </html>

@@ -120,7 +120,7 @@ window.filterData = function(selectedFilters) {
   });
 
   initializeData();
-  calculateFactorCorrelations();
+  calculateFactorCorrelations(selectedFilters);
    window.updateInsightPanel();
    draw();
 }
@@ -261,7 +261,7 @@ function initializeData() {
     updateLinkInfo();
 }
 
-function calculateFactorCorrelations() {
+function calculateFactorCorrelations(selectedFilters) {
     // Reset correlations object with expanded structure
     factorCorrelations = {
         "Note-Taking": { value: 0, detail: {} },
@@ -283,123 +283,146 @@ function calculateFactorCorrelations() {
     // If we still have no students, return (correlations remain at 0)
     if (highCgpaStudents.length === 0) return;
     
+    // Helper function to check if a factor is being used as a filter
+    const isFactorFiltered = (factorName) => {
+      switch (factorName) {
+        case "Note-Taking":
+          return selectedFilters.noteTaking && selectedFilters.noteTaking.length > 0;
+        case "Study Hours":
+          return selectedFilters.studyHours && selectedFilters.studyHours.length > 0;
+        case "Reading Frequency":
+          return selectedFilters.readingFreqNonSci && selectedFilters.readingFreqNonSci.length > 0;
+        case "Class Attendance":
+          return selectedFilters.classAttendance && selectedFilters.classAttendance.length > 0;
+        default:
+          return false;
+      }
+    };
+
     // For each factor, calculate distribution among high CGPA students
-    
     // 1. Note-Taking distribution
-    let noteTakingDist = {
-        "Always": 0,
-        "Sometimes": 0,
-        "Never": 0
-    };
-    
-    highCgpaStudents.forEach(student => {
-        let value = student.getString('Note-taking');
-        noteTakingDist[value] = (noteTakingDist[value] || 0) + 1;
-    });
-    
-    // Convert to percentages and find highest
-    let highestValue = "";
-    let highestCount = 0;
-    
-    for (let value in noteTakingDist) {
-        noteTakingDist[value] = noteTakingDist[value] / highCgpaStudents.length;
-        factorCorrelations["Note-Taking"].detail[value] = noteTakingDist[value];
-        
-        if (noteTakingDist[value] > highestCount) {
-            highestCount = noteTakingDist[value];
-            highestValue = value;
+    if (!isFactorFiltered("Note-Taking")) {
+        let noteTakingDist = {
+            "Always": 0,
+            "Sometimes": 0,
+            "Never": 0
+        };
+
+        highCgpaStudents.forEach(student => {
+            let value = student.getString('Note-taking');
+            noteTakingDist[value] = (noteTakingDist[value] || 0) + 1;
+        });
+
+        // Convert to percentages and find highest
+        let highestValue = "";
+        let highestCount = 0;
+
+        for (let value in noteTakingDist) {
+            noteTakingDist[value] = noteTakingDist[value] / highCgpaStudents.length;
+            factorCorrelations["Note-Taking"].detail[value] = noteTakingDist[value];
+
+            if (noteTakingDist[value] > highestCount) {
+                highestCount = noteTakingDist[value];
+                highestValue = value;
+            }
         }
+
+        factorCorrelations["Note-Taking"].value = highestCount;
+        factorCorrelations["Note-Taking"].bestValue = highestValue;
     }
-    
-    factorCorrelations["Note-Taking"].value = highestCount;
-    factorCorrelations["Note-Taking"].bestValue = highestValue;
-    
+
     // 2. Study Hours distribution
-    let studyHoursDist = {
-        "20+ hours": 0,
-        "11-20 hours": 0,
-        "6-10 hours": 0,
-        "<5 hours": 0
-    };
-    
-    highCgpaStudents.forEach(student => {
-        let value = student.getString('Weekly Study Hours');
-        studyHoursDist[value] = (studyHoursDist[value] || 0) + 1;
-    });
-    
-    // Reset for next factor
-    highestValue = "";
-    highestCount = 0;
-    
-    for (let value in studyHoursDist) {
-        studyHoursDist[value] = studyHoursDist[value] / highCgpaStudents.length;
-        factorCorrelations["Study Hours"].detail[value] = studyHoursDist[value];
-        
-        if (studyHoursDist[value] > highestCount) {
-            highestCount = studyHoursDist[value];
-            highestValue = value;
+    if (!isFactorFiltered("Study Hours")) {
+        let studyHoursDist = {
+            "20+ hours": 0,
+            "11-20 hours": 0,
+            "6-10 hours": 0,
+            "<5 hours": 0
+        };
+
+        highCgpaStudents.forEach(student => {
+            let value = student.getString('Weekly Study Hours');
+            studyHoursDist[value] = (studyHoursDist[value] || 0) + 1;
+        });
+
+        // Reset for next factor
+        highestValue = "";
+        highestCount = 0;
+
+        for (let value in studyHoursDist) {
+            studyHoursDist[value] = studyHoursDist[value] / highCgpaStudents.length;
+            factorCorrelations["Study Hours"].detail[value] = studyHoursDist[value];
+
+            if (studyHoursDist[value] > highestCount) {
+                highestCount = studyHoursDist[value];
+                highestValue = value;
+            }
         }
+
+        factorCorrelations["Study Hours"].value = highestCount;
+        factorCorrelations["Study Hours"].bestValue = highestValue;
     }
-    
-    factorCorrelations["Study Hours"].value = highestCount;
-    factorCorrelations["Study Hours"].bestValue = highestValue;
-    
+
     // 3. Reading Frequency distribution
-    let readingFreqDist = {
-        "Often": 0,
-        "Sometimes": 0,
-        "None": 0
-    };
-    
-    highCgpaStudents.forEach(student => {
-        let value = student.getString('Reading frequency (non-scientific)');
-        readingFreqDist[value] = (readingFreqDist[value] || 0) + 1;
-    });
-    
-    // Reset for next factor
-    highestValue = "";
-    highestCount = 0;
-    
-    for (let value in readingFreqDist) {
-        readingFreqDist[value] = readingFreqDist[value] / highCgpaStudents.length;
-        factorCorrelations["Reading Frequency"].detail[value] = readingFreqDist[value];
-        
-        if (readingFreqDist[value] > highestCount) {
-            highestCount = readingFreqDist[value];
-            highestValue = value;
+    if (!isFactorFiltered("Reading Frequency")) {
+        let readingFreqDist = {
+            "Often": 0,
+            "Sometimes": 0,
+            "None": 0
+        };
+
+        highCgpaStudents.forEach(student => {
+            let value = student.getString('Reading frequency (non-scientific)');
+            readingFreqDist[value] = (readingFreqDist[value] || 0) + 1;
+        });
+
+        // Reset for next factor
+        highestValue = "";
+        highestCount = 0;
+
+        for (let value in readingFreqDist) {
+            readingFreqDist[value] = readingFreqDist[value] / highCgpaStudents.length;
+            factorCorrelations["Reading Frequency"].detail[value] = readingFreqDist[value];
+
+            if (readingFreqDist[value] > highestCount) {
+                highestCount = readingFreqDist[value];
+                highestValue = value;
+            }
         }
+
+        factorCorrelations["Reading Frequency"].value = highestCount;
+        factorCorrelations["Reading Frequency"].bestValue = highestValue;
     }
-    
-    factorCorrelations["Reading Frequency"].value = highestCount;
-    factorCorrelations["Reading Frequency"].bestValue = highestValue;
-    
+
     // 4. Class Attendance distribution
-    let attendanceDist = {
-        "Always": 0,
-        "Sometimes": 0
-    };
-    
-    highCgpaStudents.forEach(student => {
-        let value = student.getString('Class Attendance');
-        attendanceDist[value] = (attendanceDist[value] || 0) + 1;
-    });
-    
-    // Reset for next factor
-    highestValue = "";
-    highestCount = 0;
-    
-    for (let value in attendanceDist) {
-        attendanceDist[value] = attendanceDist[value] / highCgpaStudents.length;
-        factorCorrelations["Class Attendance"].detail[value] = attendanceDist[value];
-        
-        if (attendanceDist[value] > highestCount) {
-            highestCount = attendanceDist[value];
-            highestValue = value;
+    if (!isFactorFiltered("Class Attendance")) {
+        let attendanceDist = {
+            "Always": 0,
+            "Sometimes": 0
+        };
+
+        highCgpaStudents.forEach(student => {
+            let value = student.getString('Class Attendance');
+            attendanceDist[value] = (attendanceDist[value] || 0) + 1;
+        });
+
+        // Reset for next factor
+        highestValue = "";
+        highestCount = 0;
+
+        for (let value in attendanceDist) {
+            attendanceDist[value] = attendanceDist[value] / highCgpaStudents.length;
+            factorCorrelations["Class Attendance"].detail[value] = attendanceDist[value];
+
+            if (attendanceDist[value] > highestCount) {
+                highestCount = attendanceDist[value];
+                highestValue = value;
+            }
         }
+
+        factorCorrelations["Class Attendance"].value = highestCount;
+        factorCorrelations["Class Attendance"].bestValue = highestValue;
     }
-    
-    factorCorrelations["Class Attendance"].value = highestCount;
-    factorCorrelations["Class Attendance"].bestValue = highestValue;
 }
 
 window.updateInsightPanel = function() {
@@ -474,9 +497,9 @@ window.updateInsightPanel = function() {
             
             factorImpactBars += `
                 <div class="factor-strength">
-                    <div class="factor-name">${factor} </div> 
+                    <div class="factor-name">${factor}</div>
                     <div class="factor-bar-container">
-                        <div class="factor-bar" style="width: ${percentage}%"></div>
+                        <div class="factor-bar" data-factor="${factor}" style="width: ${percentage}%"></div>
                     </div>
                     <div class="factor-value">${percentage}%</div>
                 </div>`;
@@ -484,6 +507,13 @@ window.updateInsightPanel = function() {
 
         factorImpactBars += `</div>`;
     }
+
+    const bars = insightPanel.querySelectorAll('.factor-bar');
+
+    bars.forEach(bar => {
+        let percentage = parseFloat(bar.style.width);
+        bar.style.width = percentage + '%';
+    });
 
     let content = `
         <h2>Key Insights</h2>
@@ -506,7 +536,7 @@ function updateLinkInfo() {
 
     // Add warning message if high CGPA student count is low
     if (highCgpaStudents.length < 10) {
-        content += '<p class="warning">Warning: Low number of High CGPA students may lead to statistically insignificant insights due to limited data.</p>';
+        content += '<p class="warning">Warning: Low number of High CGPA students may lead to unreliable insights. Consider broadening your filter criteria or using a different data subset.</p>';
     }
 
     content += `<p class="selection-info"><strong>Students (current selection):</strong> <span class="comparison-text">${filteredData.length}</span></p>`;

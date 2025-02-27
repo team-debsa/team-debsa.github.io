@@ -389,3 +389,30 @@ body {
     /* color: #7f8c8d; */
     margin-top: 10px;
   }
+
+  .warning {
+    background-color: #f9f0dd;
+    border: 1px solid #e0d3bd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: #856404;
+}
+
+#link-info ul {
+    list-style: none;
+    padding-left: 20px; 
+    margin-top: 10px;  
+  }
+  
+  #link-info li {
+    margin-bottom: 10px; 
+  }
+  
+  #link-info ul li:before {
+    content: "•"; 
+    color: #7f8c8d;   
+    display: inline-block; 
+    width: 1em;  
+    margin-left: -1em; 
+  }

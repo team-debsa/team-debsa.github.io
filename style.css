@@ -242,13 +242,13 @@ body {
     margin-top: 4rem;
     border-top: 1px solid #ddd;
     padding-top: 4rem;
-    max-width: 80%;
+    max-width: 70%;
     align-items: center;
     margin: auto;
   }
   
   .about h2 {
-    font-size: 2.5rem; 
+    font-size: 2rem; 
     color: #333; 
     margin-bottom: 2rem;
     text-align: center;
@@ -310,18 +310,18 @@ body {
   }
   
   .audience-card h3 {
-    font-size: 1.75rem;
+    font-size: 1.3rem;
     color: #282D46;
     margin-bottom: 1rem;
   }
   
   .audience-card p {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: #282D46;
   }
 
   .audience-card li {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     list-style: none;
     margin-bottom: 1rem;
     position: relative;
@@ -355,10 +355,6 @@ body {
   
     .emoji-decoration {
       display: none;
-    }
-    
-    .index1-header h1 {
-      font-size: 3rem;
     }
   }
 
@@ -417,7 +413,7 @@ body {
 }
 
 .about-tool h2 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: #333;
     margin-bottom: 2rem;
     text-align: center;
@@ -447,15 +443,15 @@ body {
 }
 
 .about-tool h3 {
-    font-size: 1.75rem;
+    font-size: 1.3rem;
     color: #282D46;
     margin-bottom: 1rem;
 }
 
 .about-tool p {
-    font-size: 1.3rem;
-    color: #282D46;
-    margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: #282D46;
+  margin-bottom: 1rem;
 }
 
 .about-tool ul {
@@ -464,11 +460,11 @@ body {
 }
 
 .about-tool li {
-  font-size: 1.3rem;
-    color: #282D46;
-    margin-bottom: 0.5rem;
-    position: relative;
-    padding-left: 1.5rem;
+  font-size: 1.1rem;
+  color: #282D46;
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1.5rem;
 }
 
 .about-tool li:before {
@@ -486,6 +482,13 @@ body {
 
 .about-tool .dataset-card a:hover {
   opacity: 0.7;
+}
+
+.emoji {
+  width: 1.3em;        
+  height: 1.3em;         
+  margin-right: 0.5em;  
+  vertical-align: middle; 
 }
 
 @media (max-width: 768px) {
